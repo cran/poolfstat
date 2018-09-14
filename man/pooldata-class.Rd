@@ -4,9 +4,9 @@
 \name{pooldata-class}
 \alias{pooldata-class}
 \alias{pooldata}
-\title{An S4 class to represent a Pool-Seq data.}
+\title{An S4 class to represent a Pool-Seq data set.}
 \description{
-An S4 class to represent a Pool-Seq data.
+An S4 class to represent a Pool-Seq data set.
 }
 \section{Slots}{
 

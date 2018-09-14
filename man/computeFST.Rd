@@ -4,12 +4,12 @@
 \alias{computeFST}
 \title{Compute FST from Pool-Seq data}
 \usage{
-computeFST(pooldata, method = "MoM", snp.index = NA)
+computeFST(pooldata, method = "Anova", snp.index = NA)
 }
 \arguments{
 \item{pooldata}{A pooldata object containing Pool-Seq information}
 
-\item{method}{Either "MoM" (default method as described in the manuscript) or "PiD" (relies on an alternative modeling consisting in estimating unbiased Probability of Identity within and across pairs of pools)}
+\item{method}{Either "Anova" (default method as described in the manuscript) or "Identity" (relies on an alternative modeling consisting in estimating unbiased Probability of Identity within and across pairs of pools)}
 
 \item{snp.index}{A list of SNP to be considered in the computation (by default all the SNP are considered)}
 }

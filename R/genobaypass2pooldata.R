@@ -75,7 +75,7 @@ res@refallele.readcount=data.Y
 rm(data.Y)
 res@readcoverage=data.N
 rm(data.N)
-#res@snp.info=snpdet
+res@snp.info=matrix(NA,res@nsnp,4) #q on rajoutera sliding windows, prevoir de changer en incluant la possibilite de fournir les positions 
 #rm(snpdet)
 res@poolsizes=poolsizes
 res@poolnames=poolnames

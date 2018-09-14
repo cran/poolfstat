@@ -1,4 +1,4 @@
-#' An S4 class to represent a Pool-Seq data.
+#' An S4 class to represent a Pool-Seq data set.
 #'
 #' @slot npools The number of pools
 #' @slot nsnp The number of SNPs
