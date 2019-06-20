@@ -6,7 +6,8 @@
 \usage{
 popsync2pooldata(sync.file = "", poolsizes = NA, poolnames = NA,
   min.rc = 1, min.cov.per.pool = -1, max.cov.per.pool = 1e+06,
-  min.maf = 0.01, noindel = TRUE, nlines.per.readblock = 1e+06)
+  min.maf = 0.01, noindel = TRUE, nlines.per.readblock = 1e+06,
+  nthreads = 1)
 }
 \arguments{
 \item{sync.file}{The name (or a path) of the Popoolation sync file (might be in compressed format)}
@@ -26,6 +27,8 @@ popsync2pooldata(sync.file = "", poolsizes = NA, poolnames = NA,
 \item{noindel}{If TRUE, positions with at least one indel count are discarded}
 
 \item{nlines.per.readblock}{Number of Lines read simultaneously. Should be adapted to the available RAM.}
+
+\item{nthreads}{Number of available threads for parallelization of some part of the parsing (default=1, i.e., no parallelization)}
 }
 \value{
 A pooldata object containing 7 elements:

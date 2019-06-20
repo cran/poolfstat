@@ -5,8 +5,8 @@
 \title{Convert a VCF file into a pooldata object.}
 \usage{
 vcf2pooldata(vcf.file = "", poolsizes = NA, poolnames = NA,
-  min.cov.per.pool = -1, max.cov.per.pool = 1e+06, min.maf = 0.01,
-  nlines.per.readblock = 1e+06)
+  min.cov.per.pool = -1, min.rc = 1, max.cov.per.pool = 1e+06,
+  min.maf = 0.01, nlines.per.readblock = 1e+06, nthreads = 1)
 }
 \arguments{
 \item{vcf.file}{The name (or a path) of the Popoolation sync file (might be in compressed format)}
@@ -17,11 +17,15 @@ vcf2pooldata(vcf.file = "", poolsizes = NA, poolnames = NA,
 
 \item{min.cov.per.pool}{Minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded}
 
+\item{min.rc}{Minimal allowed read count per base (options silenced for VarScan vcf). Bases covered by less than min.rc reads are discarded and considered as sequencing error. For instance, if nucleotides A, C, G and T are covered by respectively 100, 15, 0 and 1 over all the pools, setting min.rc to 0 will lead to discard the position (the polymorphism being considered as tri-allelic), while setting min.rc to 1 (or 2, 3..14) will make the position be considered as a SNP with two alleles A and C (the only read for allele T being disregarded). For VarScan vcf, markers with more than one alternative allele are discarded because the VarScan AD field only contains one alternate read count.}
+
 \item{max.cov.per.pool}{Maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded}
 
 \item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)}
 
 \item{nlines.per.readblock}{Number of Lines read simultaneously. Should be adapted to the available RAM.}
+
+\item{nthreads}{Number of available threads for parallelization of some part of the parsing (default=1, i.e., no parallelization)}
 }
 \value{
 A pooldata object containing 7 elements:
@@ -36,10 +40,10 @@ A pooldata object containing 7 elements:
 }
 }
 \description{
-Convert VCF files into a pooldata object. Only bi-allelic SNP are here considered.
+Convert VCF files into a pooldata object.
 }
 \details{
-This function has been more specifically developped to deal with VCF files obtained with the VarScan mpileup2snp program (when run with the --output-vcf option). Filtering of SNPs is assumed to have been done mostly with the caller. For instance, the behavior of the VarScan option --min-reads2 might be similar to that of the min_rc option in the popsync2pooldata function. Yet, SNP where the two major alleles in the Pool-Seq data are different from the reference allele will here be disregarded (this might be problematic in some applications, e.g., when using a distantly related reference genome for mapping).
+Genotype format in the vcf file for each pool is assumed to contain either i) an AD field containing allele counts separated by a comma (as produced by popular software such as GATK or samtools/bcftools) or ii) both a RD (reference allele count) and a AD (alternate allele count) as obtained with the VarScan mpileup2snp program (when run with the --output-vcf option). The underlying format is automatically detected by the function. For VarScan generated vcf, it should be noticed that SNPs with more than one alternate allele are discarded (because only a single count is then reported in the AD fields) making the min.rc unavailable. The VarScan --min-reads2 option might replace to some extent this functionalities although SNP where the two major alleles in the Pool-Seq data are different from the reference allele (e.g., expected to be more frequent when using a distantly related reference genome for mapping) will be disregarded.
 }
 \examples{
  make.example.files(writing.dir=tempdir())

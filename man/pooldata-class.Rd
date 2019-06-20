@@ -19,7 +19,7 @@ An S4 class to represent a Pool-Seq data set.
 
 \item{\code{readcoverage}}{A matrix (nsnp rows and Npools columns) with overall read coverage}
 
-\item{\code{snp.info}}{A matrix (nsnp rows and 4 columns) detailing for each SNP, the chromosome (or scaffold), the position, the reference allele and the alternative allele}
+\item{\code{snp.info}}{A matrix (nsnp rows and 4 columns) detailing for each SNP, the chromosome (or scaffold), the position, allele 1 and allele 2}
 
 \item{\code{poolsizes}}{A vector of length npools with the corresponding haploid pool sizes}
 
