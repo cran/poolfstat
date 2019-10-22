@@ -50,7 +50,10 @@ vcf2pooldata<-function(vcf.file="",poolsizes=NA,poolnames=NA,min.cov.per.pool=-1
       snpcalled=posindex.cur[snpcalled]
       cnt.dat=matrix(unlist(strsplit(count_data[snpcalled,i],split = ":")),ncol=n.index,byrow=TRUE)
       if(gatk){
-        cnt.dat=matrix(unlist(strsplit(cnt.dat[,ad.index],split = ",")),ncol=2,byrow=TRUE)
+ #       cnt.dat=matrix(unlist(strsplit(cnt.dat[,ad.index],split = ",")),ncol=2,byrow=TRUE)
+        cnt.dat=cnt.dat[,ad.index]
+        cnt.dat[lengths(regmatches(cnt.dat, gregexpr(",",cnt.dat)))!=1]="0,0" #si pas une virgule on met comptage a 0 (pour gerer freebayes)
+        cnt.dat=matrix(unlist(strsplit(cnt.dat,split = ",")),ncol=2,byrow=TRUE)
       }else{
         cnt.dat=cnt.dat[,c(rd.index,ad.index)]
       }

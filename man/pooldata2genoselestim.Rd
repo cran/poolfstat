@@ -4,7 +4,7 @@
 \alias{pooldata2genoselestim}
 \title{Convert a pooldata object into SelEstim input files.}
 \usage{
-pooldata2genoselestim(pooldata, writing.dir = "", prefix = "",
+pooldata2genoselestim(pooldata, writing.dir = getwd(), prefix = "",
   subsamplesize = -1, subsamplingmethod = "thinning")
 }
 \arguments{

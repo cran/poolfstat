@@ -12,7 +12,7 @@
 #'  pooldata=popsync2pooldata(sync.file=paste0(tempdir(),"/ex.sync.gz"),poolsizes=rep(50,15))
 #'  pooldata2genoselestim(pooldata=pooldata,writing.dir=tempdir())
 #' @export
-pooldata2genoselestim=function(pooldata,writing.dir="",prefix="",subsamplesize=-1,subsamplingmethod="thinning"){
+pooldata2genoselestim=function(pooldata,writing.dir=getwd(),prefix="",subsamplesize=-1,subsamplingmethod="thinning"){
   if(writing.dir==""){stop("ERROR: Please provide the directory path where to copy the example files  (e.g., set writing.dir=getwd() to copy in the current working directory)")}
   if(!(is.pooldata(pooldata))) {stop("Data are not formatted as a valid pooldata object...")}
   subsampling=FALSE
@@ -34,8 +34,8 @@ pooldata2genoselestim=function(pooldata,writing.dir="",prefix="",subsamplesize=-
   outgenofilename=paste0(writing.dir,"/genoselestim")
   outsnpdetfilename=paste0(writing.dir,"/snpdet")
   if(nchar(prefix)>0){
-    outgenofilename=paste0(writing.dir,"/",prefix,".",outgenofilename)
-    outsnpdetfilename=paste0(writing.dir,"/",prefix,".",outsnpdetfilename)
+    outgenofilename=paste0(writing.dir,"/",prefix,".genoselestim")
+    outsnpdetfilename=paste0(writing.dir,"/",prefix,".snpdet")
   }
   if(subsampling){
     if(subsamplingmethod=="thinning"){

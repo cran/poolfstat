@@ -4,7 +4,7 @@
 \alias{pooldata2genobaypass}
 \title{Convert a pooldata object into BayPass input files.}
 \usage{
-pooldata2genobaypass(pooldata, writing.dir = "", prefix = "",
+pooldata2genobaypass(pooldata, writing.dir = getwd(), prefix = "",
   subsamplesize = -1, subsamplingmethod = "thinning")
 }
 \arguments{

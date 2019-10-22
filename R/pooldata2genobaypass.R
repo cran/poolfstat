@@ -12,7 +12,7 @@
 #'  pooldata=popsync2pooldata(sync.file=paste0(tempdir(),"/ex.sync.gz"),poolsizes=rep(50,15))
 #'  pooldata2genobaypass(pooldata=pooldata,writing.dir=tempdir())
 #' @export
-pooldata2genobaypass=function(pooldata,writing.dir="",prefix="",subsamplesize=-1,subsamplingmethod="thinning"){
+pooldata2genobaypass=function(pooldata,writing.dir=getwd(),prefix="",subsamplesize=-1,subsamplingmethod="thinning"){
   if(writing.dir==""){stop("ERROR: Please provide the directory path where to copy the example files  (e.g., set writing.dir=getwd() to copy in the current working directory)")}
   if(!(is.pooldata(pooldata))) {stop("Data are not formatted as a valid pooldata object...")}
   subsampling=FALSE
@@ -35,9 +35,9 @@ pooldata2genobaypass=function(pooldata,writing.dir="",prefix="",subsamplesize=-1
   outpoolsizefilename  =paste0(writing.dir,"/poolsize")
   outsnpdetfilename    =paste0(writing.dir,"/snpdet")
   if(nchar(prefix)>0){
-    outgenofilename=paste0(writing.dir,"/",prefix,".",outgenofilename)
-    outpoolsizefilename=paste0(writing.dir,"/",prefix,".",outpoolsizefilename)
-    outsnpdetfilename=paste0(writing.dir,"/",prefix,".",outsnpdetfilename)
+    outgenofilename=paste0(writing.dir,"/",prefix,".genobaypass")
+    outpoolsizefilename=paste0(writing.dir,"/",prefix,".poolsize")
+    outsnpdetfilename=paste0(writing.dir,"/",prefix,".snpdet")
   }
   write.table(file=outpoolsizefilename,t(pooldata@poolsizes),quote=F,col.names=F,row.names=F)
   if(subsampling){

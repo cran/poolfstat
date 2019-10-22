@@ -1,5 +1,5 @@
-e5c6809e7595b846873fd78bfaaaac77 *ChangeLog
-094fbb9a62b44eb6c80de027feba0bd1 *DESCRIPTION
+bb6ffe6301ea26d3864517ad40b8f37f *ChangeLog
+e4a45110444c7da73af9797523c2c6eb *DESCRIPTION
 d5529040a36ce983af672c1fb4cc3d3f *NAMESPACE
 26e1a68585a07bd42c23e36952a1b7f8 *R/computeFST.R
 3bb10630fbd0d09d4c27b2c32318c2a5 *R/computePairwiseFSTmatrix.R
@@ -8,12 +8,12 @@ d5529040a36ce983af672c1fb4cc3d3f *NAMESPACE
 e5a2fb71171fcd8a4223e409b873064e *R/is.pooldata.R
 8000f74e582416e7d7f8fc255330c6b5 *R/make.example.files.R
 adc8e87642f5c54de81b42cb9d71236f *R/pooldata.subset.R
-b1ad1ea66fd1d22fa441f1920ab8d467 *R/pooldata2genobaypass.R
-5146851b61f433ae72bd109beb1074dc *R/pooldata2genoselestim.R
+f020e681dde4fa743cb916edf1599e9b *R/pooldata2genobaypass.R
+f9c06d9d5103adf7f13e35f1ae195d31 *R/pooldata2genoselestim.R
 d2dc6f37f6157c962074d5e9bb24dcdd *R/poolfstat-package.R
 d9bbd90c36419b6af835df9d44b41ef8 *R/popsync2pooldata.R
-49637ee191ed1a1539690dd2682f3b9a *R/vcf2pooldata.R
-e70e44f12cfe97d3fcd0227f94175375 *inst/CITATION
+fe2c0bf593e44162ebe884bf7b26d145 *R/vcf2pooldata.R
+1f4a28fea285a061a2bf6f39d9ee324c *inst/CITATION
 639adddc62b922fde532126ca2f32d1c *inst/ex.sync.gz
 8ff7d9f354e64f5b79c583986c9cb7e0 *inst/ex.vcf.gz
 edf2a0b48d63467df915241893aff2fb *man/computeFST.Rd
@@ -24,8 +24,8 @@ f983727c1df3ec5f6a59cd83aeb3767c *man/genoselestim2pooldata.Rd
 1ac82ff4683b7c3da06142a09e8ae69b *man/make.example.files.Rd
 f46b5d79927225301ad30d8bd0c9495f *man/pooldata-class.Rd
 1c24165214326faf0fb4cc8903ba149c *man/pooldata.subset.Rd
-c77bb3cdebdbc2a2d46fc987da1e0e3e *man/pooldata2genobaypass.Rd
-e9d9e84075a9a202543ba1bc05456e93 *man/pooldata2genoselestim.Rd
+be3bbd75d49245c3d74d488d0564eb8e *man/pooldata2genobaypass.Rd
+b0c8dffd7abffe6b098975a8e2ffd08f *man/pooldata2genoselestim.Rd
 234879695d41d76cdada4ac9dc0445b5 *man/poolfstat.Rd
 256de3e3e691850c96f1fdba4fa0e64c *man/popsync2pooldata.Rd
 28d104becdcd70e61d0150d41e22298e *man/vcf2pooldata.Rd
