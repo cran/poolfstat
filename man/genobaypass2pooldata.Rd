@@ -4,9 +4,15 @@
 \alias{genobaypass2pooldata}
 \title{Convert BayPass read count and haploid pool size input files into a pooldata object}
 \usage{
-genobaypass2pooldata(genobaypass.file = "", poolsize.file = "",
-  poolnames = NA, min.cov.per.pool = -1, max.cov.per.pool = 1e+06,
-  min.maf = -1, nlines.per.readblock = 1e+06)
+genobaypass2pooldata(
+  genobaypass.file = "",
+  poolsize.file = "",
+  poolnames = NA,
+  min.cov.per.pool = -1,
+  max.cov.per.pool = 1e+06,
+  min.maf = -1,
+  nlines.per.readblock = 1e+06
+)
 }
 \arguments{
 \item{genobaypass.file}{The name (or a path) of the BayPass read count file (see the BayPass manual \url{http://www1.montpellier.inra.fr/CBGP/software/baypass/})}

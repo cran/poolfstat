@@ -4,9 +4,14 @@
 \alias{genoselestim2pooldata}
 \title{Convert SelEstim read count input files into a pooldata object}
 \usage{
-genoselestim2pooldata(genoselestim.file = "", poolnames = NA,
-  min.cov.per.pool = -1, max.cov.per.pool = 1e+06, min.maf = -1,
-  nlines.per.readblock = 1e+06)
+genoselestim2pooldata(
+  genoselestim.file = "",
+  poolnames = NA,
+  min.cov.per.pool = -1,
+  max.cov.per.pool = 1e+06,
+  min.maf = -1,
+  nlines.per.readblock = 1e+06
+)
 }
 \arguments{
 \item{genoselestim.file}{The name (or a path) of the SelEstim read count file (see the SelEstim manual \url{http://www1.montpellier.inra.fr/CBGP/software/selestim/})}

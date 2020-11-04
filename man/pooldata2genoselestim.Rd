@@ -4,8 +4,13 @@
 \alias{pooldata2genoselestim}
 \title{Convert a pooldata object into SelEstim input files.}
 \usage{
-pooldata2genoselestim(pooldata, writing.dir = getwd(), prefix = "",
-  subsamplesize = -1, subsamplingmethod = "thinning")
+pooldata2genoselestim(
+  pooldata,
+  writing.dir = getwd(),
+  prefix = "",
+  subsamplesize = -1,
+  subsamplingmethod = "thinning"
+)
 }
 \arguments{
 \item{pooldata}{A pooldata object containing Pool-Seq information (see \code{\link{vcf2pooldata}} and \code{\link{popsync2pooldata}})}

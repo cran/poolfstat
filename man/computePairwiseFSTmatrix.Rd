@@ -4,9 +4,14 @@
 \alias{computePairwiseFSTmatrix}
 \title{Compute pairwise population population FST matrix (and possibly all pairwise SNP-specific FST)}
 \usage{
-computePairwiseFSTmatrix(pooldata, method = "Anova",
-  min.cov.per.pool = -1, max.cov.per.pool = 1e+06, min.maf = -1,
-  output.snp.values = FALSE)
+computePairwiseFSTmatrix(
+  pooldata,
+  method = "Anova",
+  min.cov.per.pool = -1,
+  max.cov.per.pool = 1e+06,
+  min.maf = -1,
+  output.snp.values = FALSE
+)
 }
 \arguments{
 \item{pooldata}{A pooldata object containing Pool-Seq information}

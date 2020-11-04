@@ -4,10 +4,18 @@
 \alias{popsync2pooldata}
 \title{Convert Popoolation Sync files into a pooldata object}
 \usage{
-popsync2pooldata(sync.file = "", poolsizes = NA, poolnames = NA,
-  min.rc = 1, min.cov.per.pool = -1, max.cov.per.pool = 1e+06,
-  min.maf = 0.01, noindel = TRUE, nlines.per.readblock = 1e+06,
-  nthreads = 1)
+popsync2pooldata(
+  sync.file = "",
+  poolsizes = NA,
+  poolnames = NA,
+  min.rc = 1,
+  min.cov.per.pool = -1,
+  max.cov.per.pool = 1e+06,
+  min.maf = 0.01,
+  noindel = TRUE,
+  nlines.per.readblock = 1e+06,
+  nthreads = 1
+)
 }
 \arguments{
 \item{sync.file}{The name (or a path) of the Popoolation sync file (might be in compressed format)}

@@ -2,21 +2,32 @@
 % Please edit documentation in R/pooldata.subset.R
 \name{pooldata.subset}
 \alias{pooldata.subset}
-\title{Create a subset of the pooldata object that contains Pool-Seq data}
+\title{Create a subset of the pooldata object that contains Pool-Seq data as a function of pool and/or SNP indexes}
 \usage{
-pooldata.subset(pooldata, pool.index = c(1, 2), min.cov.per.pool = -1,
-  max.cov.per.pool = 1e+06, min.maf = -1)
+pooldata.subset(
+  pooldata,
+  pool.index = 1:pooldata@npools,
+  snp.index = 1:pooldata@nsnp,
+  min.cov.per.pool = -1,
+  max.cov.per.pool = 1e+06,
+  min.maf = -1,
+  cov.qthres.per.pool = c(0, 1)
+)
 }
 \arguments{
 \item{pooldata}{A pooldata object containing Pool-Seq information}
 
-\item{pool.index}{Indexes of the pools (at least two), that should be selected to create the new pooldata object}
+\item{pool.index}{Indexes of the pools (at least two), that should be selected to create the new pooldata object (default=all the pools)}
+
+\item{snp.index}{Indexes of the SNPs (at least two), that should be selected to create the new pooldata object (default=all the SNPs)}
 
 \item{min.cov.per.pool}{Minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded}
 
 \item{max.cov.per.pool}{Maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded}
 
-\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)}
+\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio over all read counts for the reference allele over the read coverage)}
+
+\item{cov.qthres.per.pool}{A two-elements vector containing the minimal (qmin) and maximal (qmax) quantile coverage thresholds applied to each pools (0<=qmin<qmax<=1). See details below}
 }
 \value{
 A pooldata object with 7 elements:
@@ -31,12 +42,18 @@ A pooldata object with 7 elements:
 }
 }
 \description{
-Create a subset of the pooldata object that contains Pool-Seq data
+Create a subset of the pooldata object that contains Pool-Seq data as a function of pool and/or SNP indexes
+}
+\details{
+This function allows subsetting a pooldata object by selecting only some pools and/or some SNPs (e.g., based on their position on the genome). Additional filtering steps on SNPs can be carried out on the resulting subset to discard SNP with low polymorphism or poorly or too highly covered. In addition, coverage criteria can be applied on a per-pool basis with the cov.qthres.per.pool argument. 'more specific SNP selection based on their positions on the genome or their characteristics. For instance if qmax=0.95, a position is discarded if in a given pool it has a number of reads higher than the 95-th percentile of the empirical coverage distribution in this same pool (defined over the SNPs selected by snp.index). Similarly, if qmax=0.05, a position is discarded if in a given pool it has a number of reads lower than the 5-th percentile of the empirical coverage distribution in this same pool. This mode of selection may be more relevant when considering pools with heterogeneous read coverages.
 }
 \examples{
  make.example.files(writing.dir=tempdir())
  pooldata=popsync2pooldata(sync.file=paste0(tempdir(),"/ex.sync.gz"),poolsizes=rep(50,15))
- pooldata.subset=pooldata.subset(pooldata,pool.index=c(1,2))
+ subset.by.pools=pooldata.subset(pooldata,pool.index=c(1,2))
+ subset.by.snps=pooldata.subset(pooldata,snp.index=10:100)
+ subset.by.pools.and.snps=pooldata.subset(pooldata,pool.index=c(1,2),snp.index=10:100)
+ subset.by.pools.qcov.thr=pooldata.subset(pooldata,pool.index=1:8,cov.qthres.per.pool=c(0.05,0.95)) 
 }
 \seealso{
 To generate pooldata object, see \code{\link{vcf2pooldata}}, \code{\link{popsync2pooldata}}

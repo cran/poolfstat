@@ -41,8 +41,9 @@ computePairwiseFSTmatrix<-function(pooldata,method="Anova",min.cov.per.pool=-1,m
       data.Y=pooldata@refallele.readcount[,pool.index]
       data.N=pooldata@readcoverage[,pool.index]
       ##filtres sur couverture et maf
-      tmp.maf=0.5-abs(0.5-rowSums(data.Y)/rowSums(data.N))
-      dum.sel=(rowSums(data.N>=min.cov.per.pool)==2) & (rowSums(data.N<=max.cov.per.pool)==2) & (tmp.maf>min.maf)
+      OverallN=rowSums(data.N)
+      tmp.maf=0.5-abs(0.5-rowSums(data.Y)/OverallN)
+      dum.sel=OverallN>0 & (rowSums(data.N>=min.cov.per.pool)==2) & (rowSums(data.N<=max.cov.per.pool)==2) & (tmp.maf>min.maf)
       data.Y=data.Y[dum.sel,] ; data.N=data.N[dum.sel,] 
       
       res<-new("pooldata")

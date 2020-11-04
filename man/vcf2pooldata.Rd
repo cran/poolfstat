@@ -4,9 +4,17 @@
 \alias{vcf2pooldata}
 \title{Convert a VCF file into a pooldata object.}
 \usage{
-vcf2pooldata(vcf.file = "", poolsizes = NA, poolnames = NA,
-  min.cov.per.pool = -1, min.rc = 1, max.cov.per.pool = 1e+06,
-  min.maf = 0.01, nlines.per.readblock = 1e+06, nthreads = 1)
+vcf2pooldata(
+  vcf.file = "",
+  poolsizes = NA,
+  poolnames = NA,
+  min.cov.per.pool = -1,
+  min.rc = 1,
+  max.cov.per.pool = 1e+06,
+  min.maf = 0.01,
+  remove.indels = FALSE,
+  nlines.per.readblock = 1e+06
+)
 }
 \arguments{
 \item{vcf.file}{The name (or a path) of the Popoolation sync file (might be in compressed format)}
@@ -23,9 +31,9 @@ vcf2pooldata(vcf.file = "", poolsizes = NA, poolnames = NA,
 
 \item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)}
 
-\item{nlines.per.readblock}{Number of Lines read simultaneously. Should be adapted to the available RAM.}
+\item{remove.indels}{Remove indels identified using the number of characters of the alleles in the REF or ALT fields (i.e., if at least one allele is more than 1 character, the position is discarded)}
 
-\item{nthreads}{Number of available threads for parallelization of some part of the parsing (default=1, i.e., no parallelization)}
+\item{nlines.per.readblock}{Number of Lines read simultaneously. Should be adapted to the available RAM.}
 }
 \value{
 A pooldata object containing 7 elements:
