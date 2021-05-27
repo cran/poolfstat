@@ -13,7 +13,7 @@
 #' \enumerate{
 #' \item "refallele.readcount": a matrix with nsnp rows and npools columns containing read counts for the reference allele (chosen arbitrarily) in each pool
 #' \item "readcoverage": a matrix with nsnp rows and npools columns containing read coverage in each pool
-#' \item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele in the reference assembly (3rd column); the allele taken as reference in the refallele matrix.readcount matrix (4th column); and the alternative allele (5th column)
+#' \item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele taken as reference in the refallele.readcount matrix (3rd column); and the alternative allele (4th column)
 #' \item "poolsizes": a vector of length npools containing the haploid pool sizes
 #' \item "poolnames": a vector of length npools containing the names of the pools
 #' \item "nsnp": a scalar corresponding to the number of SNPs
@@ -47,7 +47,7 @@ popsync2pooldata<-function(sync.file="",poolsizes=NA,poolnames=NA,min.rc=1,min.c
   close(file.con)
   if(length(poolsizes)!=npools){stop("ERROR: The number of pools in the sync file is different from the length of the vector of pool sizes")}
   if(sum(is.na(poolnames))>0){
-    poolnames=paste0("Pool",1:npools)
+    poolnames=paste0("P",1:npools)
   }else{
     poolnames=as.character(poolnames)
     if(length(poolnames)!=npools){stop("ERROR: The number of pools in the sync file is different from the length of vector of pool names")}
@@ -126,7 +126,11 @@ popsync2pooldata<-function(sync.file="",poolsizes=NA,poolnames=NA,min.rc=1,min.c
   rm(data.Y)
   res@readcoverage=data.N
   rm(data.N)
-  res@snp.info=snpdet
+  res@snp.info=data.frame(Chromosome=as.character(snpdet[,1]),
+                          Position=as.numeric(snpdet[,2]),
+                          RefAllele=as.character(snpdet[,3]),
+                          AltAllele=as.character(snpdet[,4]),
+                          stringsAsFactors = FALSE)
   rm(snpdet)
   res@poolsizes=poolsizes
   res@poolnames=poolnames

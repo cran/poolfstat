@@ -46,7 +46,7 @@ Rcpp::NumericMatrix extract_vscan_counts( Rcpp::StringMatrix vcf_data,
       for(int n=0;n<npools;n++){      
        istring = vcf_data(m,n) ;
        istring.push_back(':') ; // to ensure parsing until the end (i.e., if only the field finishes by RD or AD) 
-       pos_j=1 ; j=0 ; i=1 ; //(field since should never start by ':')
+       pos_j=-1 ; j=0 ; i=1 ; //(field since should never start by ':')
        while(i < istring.size() && j!=max_idx){
          if(istring[i] == ':'){
          if(j==(ad_idx-1)){
@@ -60,8 +60,8 @@ Rcpp::NumericMatrix extract_vscan_counts( Rcpp::StringMatrix vcf_data,
     i++ ;
    }
   if(ad_string[0] != '.' && rd_string[0] != '.' && j==max_idx){//the last to ensure proper field
-     return_matrix(m,n)=atof(ad_string.c_str()) ;
-     return_matrix(m,npools+n)=atof(rd_string.c_str()) + return_matrix(m,n) ;     
+     return_matrix(m,n)=atof(rd_string.c_str()) ;
+     return_matrix(m,npools+n)=atof(ad_string.c_str()) + return_matrix(m,n) ;     
   }
  //   Rcpp::Rcout << istring << " " << ad_string << " " << rd_string  << "\n" ; //<< pos1 << " " << pos2 ;
         }
@@ -96,7 +96,7 @@ Rcpp::NumericMatrix extract_nonvscan_counts( Rcpp::StringMatrix vcf_data,
     for(int n=0;n<npools;n++){      
       istring = vcf_data(m,n) ;
       istring.push_back(':') ; //in case ad field is at the end
-      pos_j=1 ; j=0 ; i=1 ; //(field since should never start by ':')
+      pos_j=-1 ; j=0 ; i=1 ; //(field since should never start by ':')
       while(i < istring.size() && j!=ad_idx){
   //      Rcpp::Rcout <<istring << " " << istring.size() << " " << i << " " << j <<  " " << pos_j << " "<< ad_idx << " " << ad_string <<"\n";
         if(istring[i] == ':'){

@@ -7,7 +7,7 @@
 is.pooldata(x)
 }
 \arguments{
-\item{x}{The name (or a path) of the Popoolation sync file (might be in compressed format)}
+\item{x}{The name of the object to be tested}
 }
 \description{
 Check pooldata objects

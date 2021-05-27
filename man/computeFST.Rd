@@ -2,28 +2,42 @@
 % Please edit documentation in R/computeFST.R
 \name{computeFST}
 \alias{computeFST}
-\title{Compute FST from Pool-Seq data}
+\title{Compute FST from Pool-Seq data or Count data}
 \usage{
-computeFST(pooldata, method = "Anova", snp.index = NA)
+computeFST(
+  x,
+  method = "Anova",
+  nsnp.per.bjack.block = 0,
+  sliding.window.size = 0,
+  verbose = TRUE
+)
 }
 \arguments{
-\item{pooldata}{A pooldata object containing Pool-Seq information}
+\item{x}{A pooldata object containing Pool-Seq information or countdata object containing allele counts information}
 
-\item{method}{Either "Anova" (default method as described in the manuscript) or "Identity" (relies on an alternative modeling consisting in estimating unbiased Probability of Identity within and across pairs of pools)}
+\item{method}{Either "Anova" (default method as described in Hivert et al (2018, eq. 9) for pool-seq data and Weir (1996, eq. 5.2) for count data) or "Identity" (relying on unbiased estimators of Probability of Identity within and across pairs of pools/populations)}
 
-\item{snp.index}{A list of SNP to be considered in the computation (by default all the SNP are considered)}
+\item{nsnp.per.bjack.block}{Number of consecutive SNPs within a block for block-jackknife (default=0, i.e., no block-jackknife sampling)}
+
+\item{sliding.window.size}{Number of consecutive SNPs within a window for multi-locus computation of Fst over sliding window with half-window size step (default=0, i.e., no sliding-window scan)}
+
+\item{verbose}{If TRUE extra information is printed on the terminal}
 }
 \value{
 A list with the four following elements:
 \enumerate{
-\item "FST": a scalar corresponding to the estimate the global FST
+\item "FST": a scalar corresponding to the estimate of the genome-wide FST over all the populations
 \item "snp.FST": a vector containing estimates of SNP-specific FST
 \item "snp.Q1": a vector containing estimates of the overall within pop. SNP-specific probability of identity
 \item "snp.Q2": a vector containing estimates of the overall between pop. SNP-specific probability of identity
+\item "mean.fst" (if nsnp.per.bjack.block>0): genome-wide Fst estimate as the mean over block-jackknife samples (may slight differ from "FST" estimate since it is only computed on SNPs eligible for Block-Jackknife)
+\item "se.fst" (if nsnp.per.bjack.block>0): standard-error of the genome-wide Fst estimate computed block-jackknife samples
+\item "fst.bjack.samples" (if nsnp.per.bjack.block>0): a vector containing estimates of the overall between pop. SNP-specific probability of identity
+\item "sliding.windows.fst" (if sliding.window.size>0): a 4-columns data frame containing information on multi-locus Fst computed for sliding windows of SNPs over the whole genome with i) column with the chromosome/contig of origin of each window; ii) the mid-position of each window; iii) the cumulated mid-position of each window (to facilitate further plotting); and iv) the estimated multi-locus Fst
 }
 }
 \description{
-Compute FST from Pool-Seq data
+Compute FST from Pool-Seq data or Count data
 }
 \examples{
  make.example.files(writing.dir=tempdir())
@@ -31,5 +45,5 @@ Compute FST from Pool-Seq data
  res.fst=computeFST(pooldata)
 }
 \seealso{
-To generate pooldata object, see \code{\link{vcf2pooldata}}, \code{\link{popsync2pooldata}}
+To generate pooldata object, see \code{\link{vcf2pooldata}}, \code{\link{popsync2pooldata}},\code{\link{genobaypass2pooldata}} or \code{\link{genoselestim2pooldata}}. To generate coundata object, see \code{\link{genobaypass2countdata}} or \code{\link{genotreemix2countdata}}.
 }

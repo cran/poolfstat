@@ -4,9 +4,9 @@
 \name{pooldata-class}
 \alias{pooldata-class}
 \alias{pooldata}
-\title{An S4 class to represent a Pool-Seq data set.}
+\title{S4 class to represent a Pool-Seq data set.}
 \description{
-An S4 class to represent a Pool-Seq data set.
+S4 class to represent a Pool-Seq data set.
 }
 \section{Slots}{
 
@@ -17,9 +17,9 @@ An S4 class to represent a Pool-Seq data set.
 
 \item{\code{refallele.readcount}}{A matrix (nsnp rows and npools columns) with read count data for the reference allele}
 
-\item{\code{readcoverage}}{A matrix (nsnp rows and Npools columns) with overall read coverage}
+\item{\code{readcoverage}}{A matrix (nsnp rows and npools columns) with overall read coverage}
 
-\item{\code{snp.info}}{A matrix (nsnp rows and 4 columns) detailing for each SNP, the chromosome (or scaffold), the position, allele 1 and allele 2}
+\item{\code{snp.info}}{A data frame (nsnp rows and 4 columns) detailing for each SNP, the chromosome (or scaffold), the position, Reference allele name and Alternate allele name (if available)}
 
 \item{\code{poolsizes}}{A vector of length npools with the corresponding haploid pool sizes}
 

@@ -1,3 +1,9 @@
+Changes from Version 1.2.0 to 2.0.0 [May 26 2021]
+
+*Major upgrade of the package including the estimation of f2, f3, f3*, f4 and D statistics and the implementation of a wide range of associated inference methods: (i) three-population test of admixture; (ii) four-population test of treeness; (iii) f4-ratio estimation of admixture rates; and (iv) fitting, visualization and (semi-automatic) construction of admixture graphs.
+*Inclusion of new objects, functions and methods and optimization of older ones (not detailed here) 
+*Fixing a minor issue in vcf2pooldata function (in version 1.2.0, the reported reference allele read count actually corresponded to the counts for the alternate allele: this had no effect on the estimation of Fst)
+
 Changes from Version 1.1.1 to 1.2.0 [November 3 2020]
 
 * Modifications of vcf2pooldata.R using cpp functions interfaced with Rcpp to improve both speed (about 1 order of magnitude on real life tests) and stability. Parallelisation has been disactivated since it did only provide marginal gain (sequential reading of the file which is not performed in parallel being the main limiting factor).

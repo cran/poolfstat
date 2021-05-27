@@ -43,7 +43,7 @@ A pooldata object containing 7 elements:
 \enumerate{
 \item "refallele.readcount": a matrix with nsnp rows and npools columns containing read counts for the reference allele (chosen arbitrarily) in each pool
 \item "readcoverage": a matrix with nsnp rows and npools columns containing read coverage in each pool
-\item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele in the reference assembly (3rd column); the allele taken as reference in the refallele matrix.readcount matrix (4th column); and the alternative allele (5th column)
+\item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele taken as reference in the refallele.readcount matrix (3rd column); and the alternative allele (4th column)
 \item "poolsizes": a vector of length npools containing the haploid pool sizes
 \item "poolnames": a vector of length npools containing the names of the pools
 \item "nsnp": a scalar corresponding to the number of SNPs

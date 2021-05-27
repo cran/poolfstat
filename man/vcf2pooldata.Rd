@@ -11,9 +11,10 @@ vcf2pooldata(
   min.cov.per.pool = -1,
   min.rc = 1,
   max.cov.per.pool = 1e+06,
-  min.maf = 0.01,
+  min.maf = -1,
   remove.indels = FALSE,
-  nlines.per.readblock = 1e+06
+  nlines.per.readblock = 1e+06,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -29,18 +30,20 @@ vcf2pooldata(
 
 \item{max.cov.per.pool}{Maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded}
 
-\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)}
+\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overall read counts for the reference allele over the read coverage)}
 
 \item{remove.indels}{Remove indels identified using the number of characters of the alleles in the REF or ALT fields (i.e., if at least one allele is more than 1 character, the position is discarded)}
 
 \item{nlines.per.readblock}{Number of Lines read simultaneously. Should be adapted to the available RAM.}
+
+\item{verbose}{If TRUE extra information is printed on the terminal}
 }
 \value{
 A pooldata object containing 7 elements:
 \enumerate{
 \item "refallele.readcount": a matrix with nsnp rows and npools columns containing read counts for the reference allele (chosen arbitrarily) in each pool
 \item "readcoverage": a matrix with nsnp rows and npools columns containing read coverage in each pool
-\item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele in the reference assembly (3rd column); the allele taken as reference in the refallele matrix.readcount matrix (4th column); and the alternative allele (5th column)
+\item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele taken as reference in the refallele.readcount matrix (3rd column); and the alternative allele (4th column)
 \item "poolsizes": a vector of length npools containing the haploid pool sizes
 \item "poolnames": a vector of length npools containing the names of the pools
 \item "nsnp": a scalar corresponding to the number of SNPs

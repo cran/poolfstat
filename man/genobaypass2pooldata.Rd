@@ -7,11 +7,12 @@
 genobaypass2pooldata(
   genobaypass.file = "",
   poolsize.file = "",
+  snp.pos = NA,
   poolnames = NA,
   min.cov.per.pool = -1,
   max.cov.per.pool = 1e+06,
   min.maf = -1,
-  nlines.per.readblock = 1e+06
+  verbose = TRUE
 )
 }
 \arguments{
@@ -19,22 +20,24 @@ genobaypass2pooldata(
 
 \item{poolsize.file}{The name (or a path) of the BayPass (haploid) pool size file (see the BayPass manual \url{http://www1.montpellier.inra.fr/CBGP/software/baypass/})}
 
+\item{snp.pos}{An optional two column matrix with nsnps rows containing the chromosome (or contig/scaffold) of origin and the position of each markers}
+
 \item{poolnames}{A character vector with the names of pool}
 
 \item{min.cov.per.pool}{Minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded}
 
 \item{max.cov.per.pool}{Maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded}
 
-\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)}
+\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overall read counts for the reference allele over the read coverage)}
 
-\item{nlines.per.readblock}{Number of Lines read simultaneously. Should be adapted to the available RAM.}
+\item{verbose}{If TRUE extra information is printed on the terminal}
 }
 \value{
 A pooldata object containing 7 elements:
 \enumerate{
 \item "refallele.readcount": a matrix with nsnp rows and npools columns containing read counts for the reference allele (chosen arbitrarily) in each pool
 \item "readcoverage": a matrix with nsnp rows and npools columns containing read coverage in each pool
-\item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele in the reference assembly (3rd column); the allele taken as reference in the refallele matrix.readcount matrix (4th column); and the alternative allele (5th column)
+\item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele taken as reference in the refallele.readcount matrix (3rd column); and the alternative allele (4th column)
 \item "poolsizes": a vector of length npools containing the haploid pool sizes
 \item "poolnames": a vector of length npools containing the names of the pools
 \item "nsnp": a scalar corresponding to the number of SNPs
@@ -43,6 +46,9 @@ A pooldata object containing 7 elements:
 }
 \description{
 Convert BayPass read count and haploid pool size input files into a pooldata object
+}
+\details{
+Information on SNP position is only required for some graphical display or to carried out block-jacknife sampling estimation of confidence intervals. If no mapping information is given (default), SNPs will be assumed to be ordered on the same chromosome and separated by 1 bp. As blocks are defined with a number of consecutive SNPs (rather than a length), the latter assumption has actually no effect (except in the reported estimated block sizes in Mb).
 }
 \examples{
  make.example.files(writing.dir=tempdir())

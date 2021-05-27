@@ -1,0 +1,6 @@
+\documentclass{article}
+\usepackage{pdfpages}
+%\VignetteIndexEntry{poolfstatvignette}
+\begin{document}
+\includepdf[pages=-, fitpaper=true]{poolfstat_vignette_6pops.pdf}
+\end{document}

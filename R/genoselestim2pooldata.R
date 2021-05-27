@@ -5,11 +5,12 @@
 #' @param max.cov.per.pool Maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded
 #' @param min.maf Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)
 #' @param nlines.per.readblock Number of Lines read simultaneously. Should be adapted to the available RAM.
+#' @param verbose If TRUE extra information is printed on the terminal
 #' @return A pooldata object containing 7 elements:
 #' \enumerate{
 #' \item "refallele.readcount": a matrix with nsnp rows and npools columns containing read counts for the reference allele (chosen arbitrarily) in each pool
 #' \item "readcoverage": a matrix with nsnp rows and npools columns containing read coverage in each pool
-#' \item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele in the reference assembly (3rd column); the allele taken as reference in the refallele matrix.readcount matrix (4th column); and the alternative allele (5th column)
+#' \item "snp.info": a matrix with nsnp rows and four columns containing respectively the contig (or chromosome) name (1st column) and position (2nd column) of the SNP; the allele taken as reference in the refallele.readcount matrix (3rd column); and the alternative allele (4th column)
 #' \item "poolsizes": a vector of length npools containing the haploid pool sizes
 #' \item "poolnames": a vector of length npools containing the names of the pools
 #' \item "nsnp": a scalar corresponding to the number of SNPs
@@ -21,7 +22,7 @@
 #'  pooldata2genoselestim(pooldata=pooldata,writing.dir=tempdir())
 #'  pooldata=genoselestim2pooldata(genoselestim.file=paste0(tempdir(),"/genoselestim"))
 #' @export
-genoselestim2pooldata<-function(genoselestim.file="",poolnames=NA,min.cov.per.pool=-1,max.cov.per.pool=1e6,min.maf=-1,nlines.per.readblock=1000000){
+genoselestim2pooldata<-function(genoselestim.file="",poolnames=NA,min.cov.per.pool=-1,max.cov.per.pool=1e6,min.maf=-1,nlines.per.readblock=1000000,verbose=TRUE){
 if(nchar(genoselestim.file)==0){stop("ERROR: Please provide the name of the read count data file (in BayPass format)")}
 file.con=file(genoselestim.file,open="r") 
 ##
@@ -58,7 +59,9 @@ while(continue.reading){
    data.Y=rbind(data.Y,tmp.Y) ; data.N=rbind(data.N,tmp.N)
  }
  nlines.read=nlines.read+npos
+ if(verbose){
  cat(nlines.read/1000000,"millions lines processed in",round((proc.time()-time1)[1]/60,2)," min.; ",nrow(data.Y),"SNPs found\n")
+ }
 }
 }
 close(file.con)
@@ -70,11 +73,16 @@ res@refallele.readcount=data.Y
 rm(data.Y)
 res@readcoverage=data.N
 rm(data.N)
-res@snp.info=matrix(NA,res@nsnp,4) #q on rajoutera sliding windows, prevoir de changer en incluant la possibilite de fournir les positions 
+tmp.snp.info=matrix(NA,res@nsnp,4) #q on rajoutera sliding windows, prevoir de changer en incluant la possibilite de fournir les positions
+res@snp.info=data.frame(Chromosome=as.character(tmp.snp.info[,1]),
+                        Position=as.numeric(tmp.snp.info[,2]),
+                        RefAllele=as.character(tmp.snp.info[,3]),
+                        AltAllele=as.character(tmp.snp.info[,4]),
+                        stringsAsFactors = FALSE)
 #rm(snpdet)
 res@poolsizes=poolsizes
 res@poolnames=poolnames
 
-cat("Data consists of",res@nsnp,"SNPs for",res@npools,"Pools\n")
+if(verbose){cat("Data consists of",res@nsnp,"SNPs for",res@npools,"Pools\n")}
 return(res)
 }

@@ -21,3 +21,23 @@
     .Call('_poolfstat_extract_allele_names', PACKAGE = 'poolfstat', allele_info, allele_idx)
 }
 
+#' @export
+.compute_Ddenom <- function(snpQ2, f2idx, verbose) {
+    .Call('_poolfstat_compute_Ddenom', PACKAGE = 'poolfstat', snpQ2, f2idx, verbose)
+}
+
+#' @export
+.compute_Q_bjmeans <- function(snpQ, snp_bj_id, verbose) {
+    .Call('_poolfstat_compute_Q_bjmeans', PACKAGE = 'poolfstat', snpQ, snp_bj_id, verbose)
+}
+
+#' @export
+.compute_F2_bjmeans <- function(snpQ1, snpQ2, q1_idx, snp_bj_id, verbose) {
+    .Call('_poolfstat_compute_F2_bjmeans', PACKAGE = 'poolfstat', snpQ1, snpQ2, q1_idx, snp_bj_id, verbose)
+}
+
+#' @export
+.compute_Ddenom_bjmeans <- function(snpQ2, f2idx, snp_bj_id, verbose) {
+    .Call('_poolfstat_compute_Ddenom_bjmeans', PACKAGE = 'poolfstat', snpQ2, f2idx, snp_bj_id, verbose)
+}
+

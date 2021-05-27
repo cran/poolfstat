@@ -11,7 +11,9 @@ pooldata.subset(
   min.cov.per.pool = -1,
   max.cov.per.pool = 1e+06,
   min.maf = -1,
-  cov.qthres.per.pool = c(0, 1)
+  cov.qthres.per.pool = c(0, 1),
+  return.snp.idx = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -28,6 +30,10 @@ pooldata.subset(
 \item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio over all read counts for the reference allele over the read coverage)}
 
 \item{cov.qthres.per.pool}{A two-elements vector containing the minimal (qmin) and maximal (qmax) quantile coverage thresholds applied to each pools (0<=qmin<qmax<=1). See details below}
+
+\item{return.snp.idx}{If TRUE, the row.names of the snp.info slot of the returned pooldata object are named as "rsx" where x is the index of SNP in the initial pooldata object (default=FALSE)}
+
+\item{verbose}{If TRUE return some information}
 }
 \value{
 A pooldata object with 7 elements:

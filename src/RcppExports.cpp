@@ -55,12 +55,71 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// compute_Ddenom
+Rcpp::NumericVector compute_Ddenom(Rcpp::NumericMatrix snpQ2, Rcpp::IntegerMatrix f2idx, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_Ddenom(SEXP snpQ2SEXP, SEXP f2idxSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ2(snpQ2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type f2idx(f2idxSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_Ddenom(snpQ2, f2idx, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_Q_bjmeans
+Rcpp::NumericVector compute_Q_bjmeans(Rcpp::NumericMatrix snpQ, Rcpp::IntegerVector snp_bj_id, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_Q_bjmeans(SEXP snpQSEXP, SEXP snp_bj_idSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ(snpQSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type snp_bj_id(snp_bj_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_Q_bjmeans(snpQ, snp_bj_id, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_F2_bjmeans
+Rcpp::NumericVector compute_F2_bjmeans(Rcpp::NumericMatrix snpQ1, Rcpp::NumericMatrix snpQ2, Rcpp::IntegerMatrix q1_idx, Rcpp::IntegerVector snp_bj_id, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_F2_bjmeans(SEXP snpQ1SEXP, SEXP snpQ2SEXP, SEXP q1_idxSEXP, SEXP snp_bj_idSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ1(snpQ1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ2(snpQ2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type q1_idx(q1_idxSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type snp_bj_id(snp_bj_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_F2_bjmeans(snpQ1, snpQ2, q1_idx, snp_bj_id, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_Ddenom_bjmeans
+Rcpp::NumericVector compute_Ddenom_bjmeans(Rcpp::NumericMatrix snpQ2, Rcpp::IntegerMatrix f2idx, Rcpp::IntegerVector snp_bj_id, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_Ddenom_bjmeans(SEXP snpQ2SEXP, SEXP f2idxSEXP, SEXP snp_bj_idSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ2(snpQ2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type f2idx(f2idxSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type snp_bj_id(snp_bj_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_Ddenom_bjmeans(snpQ2, f2idx, snp_bj_id, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_poolfstat_scan_allele_info", (DL_FUNC) &_poolfstat_scan_allele_info, 1},
     {"_poolfstat_extract_vscan_counts", (DL_FUNC) &_poolfstat_extract_vscan_counts, 3},
     {"_poolfstat_extract_nonvscan_counts", (DL_FUNC) &_poolfstat_extract_nonvscan_counts, 4},
     {"_poolfstat_extract_allele_names", (DL_FUNC) &_poolfstat_extract_allele_names, 2},
+    {"_poolfstat_compute_Ddenom", (DL_FUNC) &_poolfstat_compute_Ddenom, 3},
+    {"_poolfstat_compute_Q_bjmeans", (DL_FUNC) &_poolfstat_compute_Q_bjmeans, 3},
+    {"_poolfstat_compute_F2_bjmeans", (DL_FUNC) &_poolfstat_compute_F2_bjmeans, 5},
+    {"_poolfstat_compute_Ddenom_bjmeans", (DL_FUNC) &_poolfstat_compute_Ddenom_bjmeans, 4},
     {NULL, NULL, 0}
 };
 
