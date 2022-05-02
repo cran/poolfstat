@@ -1,7 +1,7 @@
 Package: poolfstat
 Maintainer: Mathieu Gautier <mathieu.gautier@inrae.fr>
 Author: Mathieu Gautier
-Version: 2.0.0
+Version: 2.1.1
 License: GPL (>= 2)
 Title: Computing f-Statistics and Building Admixture Graphs Based on
         Allele Count or Pool-Seq Read Count Data
@@ -14,6 +14,6 @@ Depends: R (>= 3.0)
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 NeedsCompilation: yes
-Packaged: 2021-05-27 08:51:12 UTC; mathieu
+Packaged: 2022-05-02 09:53:16 UTC; mathieu
 Repository: CRAN
-Date/Publication: 2021-05-27 09:20:02 UTC
+Date/Publication: 2022-05-02 16:10:02 UTC

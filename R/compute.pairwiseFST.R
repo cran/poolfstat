@@ -38,6 +38,7 @@ compute.pairwiseFST<-function(x,method="Anova",min.cov.per.pool=-1,max.cov.per.p
   rownames(out@values)=pop.pairs.names
   if(output.snp.values | out@blockjacknife){
     out@PairwiseSnpQ1=matrix(NA,x@nsnp,n.pairs)#,dimnames=list(paste0("rs",1:x@nsnp),pop.pairs.names))
+    colnames(out@PairwiseSnpQ1)=pop.pairs.names
     out@PairwiseSnpQ2=out@PairwiseSnpQ1
     if(output.snp.values){out@PairwiseSnpFST=out@PairwiseSnpQ1}
     if(method=="Anova"){snp.Nc=matrix(NA,x@nsnp,n.pairs)}

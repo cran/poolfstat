@@ -22,6 +22,11 @@
 }
 
 #' @export
+.find_indelneighbor_idx <- function(contig, position, indels_idx, min_dist, indels_size) {
+    .Call('_poolfstat_find_indelneighbor_idx', PACKAGE = 'poolfstat', contig, position, indels_idx, min_dist, indels_size)
+}
+
+#' @export
 .compute_Ddenom <- function(snpQ2, f2idx, verbose) {
     .Call('_poolfstat_compute_Ddenom', PACKAGE = 'poolfstat', snpQ2, f2idx, verbose)
 }

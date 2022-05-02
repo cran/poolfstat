@@ -7,6 +7,7 @@
 #' @exportClass pooldata countdata graph.params fitted.graph fstats pairwisefst 
 #' @exportMethod plot heatmap
 #' @import graphics
+#' @import RcppProgress
 #' @importFrom utils read.table write.table combn
 #' @importFrom methods is new validObject show
 #' @importFrom foreach foreach getDoParWorkers %dopar%

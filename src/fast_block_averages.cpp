@@ -23,7 +23,7 @@ Rcpp::NumericVector compute_Ddenom( Rcpp::NumericMatrix snpQ2,
     dnsnp=0 ;
    for(j=0;j<nsnp;j++){
      idx_1=f2idx(i,0)-1 ; idx_2=f2idx(i,1)-1 ;
-     if(!(NumericMatrix::is_na(snpQ2(j,idx_1)) | NumericMatrix::is_na(snpQ2(j,idx_2)))){
+     if(!(NumericMatrix::is_na(snpQ2(j,idx_1)) || NumericMatrix::is_na(snpQ2(j,idx_2)))){
        dnsnp++ ;
        Denom(i)+=(1.-snpQ2(j,idx_1))*(1.-snpQ2(j,idx_2)) ;   
      }
@@ -95,7 +95,7 @@ Rcpp::NumericVector compute_F2_bjmeans( Rcpp::NumericMatrix snpQ1,
     for(j=0;j<nsnp;j++){
        p1_id=q1_idx(i,0)-1;
        p2_id=q1_idx(i,1)-1;      
-      if(!(NumericMatrix::is_na(snpQ1(j,p1_id)) | NumericMatrix::is_na(snpQ1(j,p1_id)) | NumericMatrix::is_na(snpQ2(j,i)))){
+      if(!(NumericMatrix::is_na(snpQ1(j,p1_id)) || NumericMatrix::is_na(snpQ1(j,p1_id)) || NumericMatrix::is_na(snpQ2(j,i)))){
         k=snp_bj_id(j)-1 ;
         bjnsnp(k)++ ;
         tmp_val=(snpQ1(j,p1_id)+snpQ1(j,p2_id))/2. - snpQ2(j,i) ; 
@@ -136,7 +136,7 @@ Rcpp::NumericVector compute_Ddenom_bjmeans( Rcpp::NumericMatrix snpQ2,
     //scanning snp values
     for(j=0;j<nsnp;j++){
       idx_1=f2idx(i,0)-1 ; idx_2=f2idx(i,1)-1 ;    
-      if(!(NumericMatrix::is_na(snpQ2(j,idx_1)) | NumericMatrix::is_na(snpQ2(j,idx_2)))){
+      if(!(NumericMatrix::is_na(snpQ2(j,idx_1)) || NumericMatrix::is_na(snpQ2(j,idx_2)))){
         k=snp_bj_id(j)-1 ;
         bjnsnp(k)++ ;
         tmp_val=(1.-snpQ2(j,idx_1))*(1.-snpQ2(j,idx_2)) ; 

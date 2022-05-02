@@ -81,7 +81,7 @@ setMethod("show","pairwisefst",
 #' @param x Object of class pairwisefst
 #' @param Rowv determines if and how the row dendrogram should be computed and reordered. Either a dendrogram or a vector of values used to reorder the row dendrogram or NA to suppress any row dendrogram (and reordering) or by default, NULL, see ‘Details’ below.
 #' @param Colv determines if and how the column dendrogram should be reordered. Has the same options as the Rowv argument above and additionally when x is a square matrix, Colv = "Rowv" means that columns should be treated identically to the rows (and so if there is to be no row dendrogram there will not be a column one either).
-#' @param distfun function used to compute the distance (dissimilarity) between both rows and columns. Defaults to dist.
+#' @param distfun function used to compute the distance (dissimilarity) between both rows and columns. Defaults to as.dist.
 #' @param hclustfun function used to compute the hierarchical clustering when Rowv or Colv are not dendrograms. Defaults to hclust. Should take as argument a result of distfun and return an object to which as.dendrogram can be applied.
 #' @param reorderfun function(d, w) of dendrogram and weights for reordering the row and column dendrograms. The default uses reorder.dendrogram.
 #' @param add.expr expression that will be evaluated after the call to image. Can be used to add components to the plot.
@@ -100,7 +100,7 @@ setMethod("show","pairwisefst",
 #' @param ... additional arguments passed on to image, e.g., col specifying the colors.
 setMethod("heatmap","pairwisefst",
           function ( x, Rowv = NULL, Colv = if (symm) "Rowv" else NULL, 
-                     distfun = dist, hclustfun = hclust, reorderfun = function(d,w) reorder(d, w), add.expr, symm = FALSE, revC = identical(Colv,"Rowv"), scale = c("row", "column", "none"), na.rm = TRUE,margins = c(5, 5), ColSideColors, RowSideColors, cexRow = 0.2 + 1/log10(nrow(x@PairwiseFSTmatrix)), cexCol = 0.2 + 1/log10(ncol(x@PairwiseFSTmatrix)), labRow = NULL,labCol = NULL, main = NULL, xlab = NULL, ylab = NULL, keep.dendro = FALSE, verbose = getOption("verbose"), ... ){
+                     distfun = as.dist, hclustfun = hclust, reorderfun = function(d,w) reorder(d, w), add.expr, symm = FALSE, revC = identical(Colv,"Rowv"), scale = c("row", "column", "none"), na.rm = TRUE,margins = c(5, 5), ColSideColors, RowSideColors, cexRow = 0.2 + 1/log10(nrow(x@PairwiseFSTmatrix)), cexCol = 0.2 + 1/log10(ncol(x@PairwiseFSTmatrix)), labRow = NULL,labCol = NULL, main = NULL, xlab = NULL, ylab = NULL, keep.dendro = FALSE, verbose = getOption("verbose"), ... ){
              heatmap(x@PairwiseFSTmatrix,Rowv = Rowv, Colv = Colv, 
                      distfun = distfun, hclustfun = hclustfun, reorderfun = reorderfun, add.expr, symm = symm, revC = revC, scale = scale, na.rm = na.rm,margins = margins, ColSideColors, RowSideColors, cexRow = cexRow, cexCol = cexCol, labRow = labRow,labCol = labCol, main = main, xlab = xlab, ylab = ylab, keep.dendro = keep.dendro, verbose =verbose, ...)
           }

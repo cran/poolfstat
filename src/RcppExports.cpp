@@ -55,6 +55,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// find_indelneighbor_idx
+Rcpp::IntegerVector find_indelneighbor_idx(Rcpp::StringVector contig, Rcpp::IntegerVector position, Rcpp::IntegerVector indels_idx, int min_dist, Rcpp::IntegerVector indels_size);
+RcppExport SEXP _poolfstat_find_indelneighbor_idx(SEXP contigSEXP, SEXP positionSEXP, SEXP indels_idxSEXP, SEXP min_distSEXP, SEXP indels_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type contig(contigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type position(positionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type indels_idx(indels_idxSEXP);
+    Rcpp::traits::input_parameter< int >::type min_dist(min_distSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type indels_size(indels_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(find_indelneighbor_idx(contig, position, indels_idx, min_dist, indels_size));
+    return rcpp_result_gen;
+END_RCPP
+}
 // compute_Ddenom
 Rcpp::NumericVector compute_Ddenom(Rcpp::NumericMatrix snpQ2, Rcpp::IntegerMatrix f2idx, Rcpp::LogicalVector verbose);
 RcppExport SEXP _poolfstat_compute_Ddenom(SEXP snpQ2SEXP, SEXP f2idxSEXP, SEXP verboseSEXP) {
@@ -116,6 +131,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_poolfstat_extract_vscan_counts", (DL_FUNC) &_poolfstat_extract_vscan_counts, 3},
     {"_poolfstat_extract_nonvscan_counts", (DL_FUNC) &_poolfstat_extract_nonvscan_counts, 4},
     {"_poolfstat_extract_allele_names", (DL_FUNC) &_poolfstat_extract_allele_names, 2},
+    {"_poolfstat_find_indelneighbor_idx", (DL_FUNC) &_poolfstat_find_indelneighbor_idx, 5},
     {"_poolfstat_compute_Ddenom", (DL_FUNC) &_poolfstat_compute_Ddenom, 3},
     {"_poolfstat_compute_Q_bjmeans", (DL_FUNC) &_poolfstat_compute_Q_bjmeans, 3},
     {"_poolfstat_compute_F2_bjmeans", (DL_FUNC) &_poolfstat_compute_F2_bjmeans, 5},

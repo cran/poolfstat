@@ -8,7 +8,7 @@
   x,
   Rowv = NULL,
   Colv = if (symm) "Rowv" else NULL,
-  distfun = dist,
+  distfun = as.dist,
   hclustfun = hclust,
   reorderfun = function(d, w) reorder(d, w),
   add.expr,
@@ -38,7 +38,7 @@
 
 \item{Colv}{determines if and how the column dendrogram should be reordered. Has the same options as the Rowv argument above and additionally when x is a square matrix, Colv = "Rowv" means that columns should be treated identically to the rows (and so if there is to be no row dendrogram there will not be a column one either).}
 
-\item{distfun}{function used to compute the distance (dissimilarity) between both rows and columns. Defaults to dist.}
+\item{distfun}{function used to compute the distance (dissimilarity) between both rows and columns. Defaults to as.dist.}
 
 \item{hclustfun}{function used to compute the hierarchical clustering when Rowv or Colv are not dendrograms. Defaults to hclust. Should take as argument a result of distfun and return an object to which as.dendrogram can be applied.}
 

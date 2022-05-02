@@ -49,8 +49,15 @@ pooldata.subset<-function(pooldata,pool.index=1:pooldata@npools,snp.index=1:pool
   if(cov.qthres.per.pool[1]>0 | cov.qthres.per.pool[2]<1){
     min.depth=apply(data.N,2,quantile,probs=cov.qthres.per.pool[1])    
     max.depth=apply(data.N,2,quantile,probs=cov.qthres.per.pool[2])
-    index.pos.sel=which(rowSums(data.N>(rep(1,nrow(data.N))%*%t(max.depth)))==0 & rowSums(data.N<(rep(1,nrow(data.N))%*%t(min.depth)))==0)
-    data.Y=data.Y[index.pos.sel,] ; data.N=data.N[index.pos.sel,] ; data.D=data.D[index.pos.sel,] 
+    index.pos.sel=rowSums(data.N>(rep(1,nrow(data.N))%*%t(max.depth)))==0 & rowSums(data.N<(rep(1,nrow(data.N))%*%t(min.depth)))==0
+    if(sum(index.pos.sel)==1){
+      data.Y=matrix(data.Y[index.pos.sel,],nrow=1)
+      data.N=matrix(data.N[index.pos.sel,],nrow=1)
+    }else{
+      data.Y=data.Y[index.pos.sel,]
+      data.N=data.N[index.pos.sel,]  
+    }
+    data.D=data.D[index.pos.sel,] 
   }  
   res<-new("pooldata")
   res@npools=npools

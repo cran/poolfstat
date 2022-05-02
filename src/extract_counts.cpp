@@ -187,3 +187,37 @@ Rcpp::StringMatrix extract_allele_names( Rcpp::StringVector allele_info,
     }
   return return_matrix;
 }
+
+//' @export
+// [[Rcpp::export(name=".find_indelneighbor_idx")]]
+Rcpp::IntegerVector find_indelneighbor_idx( Rcpp::StringVector contig,
+                                            Rcpp::IntegerVector position,
+                                            Rcpp::IntegerVector indels_idx,
+                                            int min_dist,
+                                            Rcpp::IntegerVector indels_size) {//return 1 if close to indel, 0 else
+  int idx_j=0 ;
+  int npos=position.size();
+  int nindels=indels_idx.size();
+  std::string cur_ctg ;
+  int cur_pos_thr;
+  Rcpp::IntegerVector return_vector(npos);
+  for(int i=0;i<nindels;i++){
+    return_vector(indels_idx(i))=1 ;
+    cur_ctg=contig(indels_idx(i));
+    //to the left
+    idx_j=indels_idx(i)-1;
+    cur_pos_thr=position(indels_idx(i))-min_dist;
+    while(idx_j>=0 && contig[idx_j]==cur_ctg && position[idx_j]>=cur_pos_thr){
+      return_vector(idx_j)=1;
+      idx_j--;
+    }
+    //to the right
+    idx_j=indels_idx(i)+1;
+    cur_pos_thr=position(indels_idx(i))+min_dist+indels_size(i)-1 ;
+    while(idx_j<=npos && contig[idx_j]==cur_ctg && position[idx_j]<=cur_pos_thr){
+      return_vector(idx_j)=1;
+      idx_j++;
+    }
+  }
+  return return_vector;
+}

@@ -7,12 +7,12 @@ vers <- paste("R package version", meta$Version)
 citEntry(entry="Article",
          author =  "Gautier M., Vitalis R., Flori L. and Estoup A.",
          title = 	 "f-statistics estimation and admixture graph construction with Pool-Seq or allele count data using the R package poolfstat",
-         journal = 	 "submitted",
-         year = 	 2021,
-         volume =	 NA,
-         number =	 NA,
-         pages="NA",
-         textVersion ="Gautier M, Vitalis R, Flori L and Estoup A (2021). f-statistics estimation and admixture graph construction with Pool-Seq or allele count data using the R package poolfstat. submitted" )
+         journal = 	 "Molecular Ecology Resources",
+         year = 	 2022,
+         volume =	 22,
+         number =	 4,
+         pages="1394-1416",
+         textVersion ="Gautier M, Vitalis R, Flori L and Estoup A (2022). f-statistics estimation and admixture graph construction with Pool-Seq or allele count data using the R package poolfstat. Molecular Ecology Resources, 22(4):1394-1416 (preprint version: hal-03481066)" )
 
 citEntry(entry="Article",
          author = 	 "Hivert V., Leblois R., Petit E.J., Gautier M., and Vitalis R.",

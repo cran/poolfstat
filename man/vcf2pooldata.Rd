@@ -13,6 +13,7 @@ vcf2pooldata(
   max.cov.per.pool = 1e+06,
   min.maf = -1,
   remove.indels = FALSE,
+  min.dist.from.indels = 0,
   nlines.per.readblock = 1e+06,
   verbose = TRUE
 )
@@ -34,6 +35,8 @@ vcf2pooldata(
 
 \item{remove.indels}{Remove indels identified using the number of characters of the alleles in the REF or ALT fields (i.e., if at least one allele is more than 1 character, the position is discarded)}
 
+\item{min.dist.from.indels}{Remove SNPs within min.dist.from.indels from an indel i.e. SNP with position p verifying (indel.pos-min.dist)<=p<=(indel.pos+min.dist+l.indels-1) where l.indel=length of the ref. indel allele. If min.dist.from.indels>0, INDELS are also removed (i.e., remove.indels is set to TRUE).}
+
 \item{nlines.per.readblock}{Number of Lines read simultaneously. Should be adapted to the available RAM.}
 
 \item{verbose}{If TRUE extra information is printed on the terminal}
@@ -54,7 +57,7 @@ A pooldata object containing 7 elements:
 Convert VCF files into a pooldata object.
 }
 \details{
-Genotype format in the vcf file for each pool is assumed to contain either i) an AD field containing allele counts separated by a comma (as produced by popular software such as GATK or samtools/bcftools) or ii) both a RD (reference allele count) and a AD (alternate allele count) as obtained with the VarScan mpileup2snp program (when run with the --output-vcf option). The underlying format is automatically detected by the function. For VarScan generated vcf, it should be noticed that SNPs with more than one alternate allele are discarded (because only a single count is then reported in the AD fields) making the min.rc unavailable. The VarScan --min-reads2 option might replace to some extent this functionalities although SNP where the two major alleles in the Pool-Seq data are different from the reference allele (e.g., expected to be more frequent when using a distantly related reference genome for mapping) will be disregarded.
+Genotype format in the vcf file for each pool is assumed to contain either i) an AD field containing allele counts separated by a comma (as produced by popular software such as GATK or samtools/bcftools) or ii) both a RD (reference allele count) and a AD (alternate allele count) as obtained with the VarScan mpileup2snp program (when run with the --output-vcf option). The underlying format is automatically detected by the function. For VarScan generated vcf, it should be noticed that SNPs with more than one alternate allele are discarded (because only a single count is then reported in the AD fields) making the min.rc unavailable. The VarScan --min-reads2 option might replace to some extent this functionality although SNP where the two major alleles in the Pool-Seq data are different from the reference allele (e.g., expected to be more frequent when using a distantly related reference genome for mapping) will be disregarded.
 }
 \examples{
  make.example.files(writing.dir=tempdir())
