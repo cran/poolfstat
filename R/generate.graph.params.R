@@ -20,6 +20,11 @@
 #' #then to use the dot program out of R in a terminal: dot -Tpng inputgraph.dot
 #' @export
 generate.graph.params<-function(graph,fstats=NULL,popref=NULL,outfileprefix=NULL,verbose=TRUE){
+  ##check if any pop or adm parm is named I or i (otherwise may be interpreted as complex number in literal computation)
+  if(sum(graph=="I"|graph=="i")>0){
+    stop("Pops or Admixture proportion parameters cannot be named I or i (you may change into any another letter(s))\n")
+  }
+  ##
   out=new("graph.params")
   #######################
   ####prepare graph file in dot format (allow evaluating input graph)
@@ -67,7 +72,7 @@ generate.graph.params<-function(graph,fstats=NULL,popref=NULL,outfileprefix=NULL
       cat("PB: check matching (or presence) of parentheses in:\n")
       show(dum[dum.eval])
       stop("admixture proportion must be of the form alpha and (1-alpha) and parentheses are mandatory in the latter case\n")
-    }    
+    }
   }else{
     n.adm.nodes=0
   }

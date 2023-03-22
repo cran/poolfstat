@@ -1,3 +1,10 @@
+Changes from Version 2.1.1 to 2.1.2 [March 22 2023]
+
+* Fixing a bug in the pooldata2genobaypass and pooldata2genoselestim export function (the last subset is now printed when using thinning option)
+* Function pooldata2genobaypass and genobaypass2pooldata have been accelerated by using fread and fwrite from the package data.table
+* Fixing a bug in add.leaf function (I is excluded from possible parameter name for admixture rate)
+* Slight modification of computeFST function (allow for NA in the computation of SSI and SSP) 
+
 Changes from Version 2.0.0 to 2.1.1 [May 2 2022]
 
 * Adding a new option in vcf2pooldata.R to allow removing SNPs close to indels (min.dist.from.indels)

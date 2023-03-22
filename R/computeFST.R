@@ -112,9 +112,9 @@ computeFST<-function(x,method="Anova",nsnp.per.bjack.block=0,sliding.window.size
       rm(C_2,mtrx.n_i) ; gc()
       #    YY_alt <- x@readcoverage - x@refallele.readcount
       #    SSI <- rowSums(x@refallele.readcount - x@refallele.readcount^2 / x@readcoverage + YY_alt - YY_alt^2 / x@readcoverage,na.rm = TRUE)
-      SSI <- 2*rowSums(x@refallele.readcount*(x@readcoverage-x@refallele.readcount)/x@readcoverage)
+      SSI <- 2*rowSums(x@refallele.readcount*(x@readcoverage-x@refallele.readcount)/x@readcoverage,na.rm=TRUE)
       SA<-rowSums(x@refallele.readcount)/C_1
-      SSP<-2*rowSums(x@readcoverage*((x@refallele.readcount/x@readcoverage-SA)**2))
+      SSP<-2*rowSums(x@readcoverage*((x@refallele.readcount/x@readcoverage-SA)**2),na.rm=TRUE)
       #    SSP <- rowSums(x@readcoverage * ((x@refallele.readcount / x@readcoverage) - (rowSums(x@refallele.readcount) / C_1))^2 + x@readcoverage * ((YY_alt / x@readcoverage) - (rowSums(YY_alt) / C_1))^2,na.rm = TRUE)
       #    rm(YY_alt,mtrx.n_i) ; gc()
       MSI <- SSI / (C_1 - D_2)

@@ -43,19 +43,25 @@ pooldata2genobaypass=function(pooldata,writing.dir=getwd(),prefix="",subsamplesi
   if(subsampling){
     if(subsamplingmethod=="thinning"){
       tmp.n=floor(pooldata@nsnp/subsamplesize)
-      for(i in 1:(tmp.n-1)){
+      for(i in 1:tmp.n){
         tmp.sel=seq(i,pooldata@nsnp,tmp.n)
-        write.table(file=paste0(outsnpdetfilename,".sub",i),pooldata@snp.info[tmp.sel,],quote=F,col.names=F,row.names=F) 
-        write.table(file=paste0(outgenofilename,".sub",i),mat.count[tmp.sel,],quote=F,col.names=F,row.names=F) 
+        fwrite(pooldata@snp.info[tmp.sel,],file=paste0(outsnpdetfilename,".sub",i),sep=" ",col.names=F,row.names=F)
+       # write.table(file=paste0(outsnpdetfilename,".sub",i),pooldata@snp.info[tmp.sel,],quote=F,col.names=F,row.names=F) 
+        fwrite(mat.count[tmp.sel,],file=paste0(outgenofilename,".sub",i),sep=" ",col.names=F,row.names=F)# 
+       # write.table(file=paste0(outgenofilename,".sub",i),mat.count[tmp.sel,],quote=F,col.names=F,row.names=F) 
       }
     }
     if(subsamplingmethod=="random"){
       tmp.sel=sort(sample(1:pooldata@nsnp,subsamplesize))
-      write.table(file=outsnpdetfilename,pooldata@snp.info[tmp.sel,],quote=F,col.names=F,row.names=F) 
-      write.table(file=outgenofilename,mat.count[tmp.sel,],quote=F,col.names=F,row.names=F) 
+      fwrite(pooldata@snp.info[tmp.sel,],file=paste0(outsnpdetfilename,".sub"),sep=" ",col.names=F,row.names=F)
+      # write.table(file=paste0(outsnpdetfilename,".sub",i),pooldata@snp.info[tmp.sel,],quote=F,col.names=F,row.names=F) 
+      fwrite(mat.count[tmp.sel,],file=paste0(outgenofilename,".sub"),sep=" ",col.names=F,row.names=F)# 
+      # write.table(file=paste0(outgenofilename,".sub",i),mat.count[tmp.sel,],quote=F,col.names=F,row.names=F) 
       }
   }else{
-   write.table(file=outsnpdetfilename,pooldata@snp.info,quote=F,col.names=F,row.names=F) 
-   write.table(file=outgenofilename,mat.count,quote=F,col.names=F,row.names=F) 
+   fwrite(pooldata@snp.info,file=outsnpdetfilename,sep=" ",col.names=F,row.names=F)  
+ #  write.table(file=outsnpdetfilename,pooldata@snp.info,quote=F,col.names=F,row.names=F) 
+   fwrite(mat.count,file=outgenofilename,sep=" ",col.names=F,row.names=F) 
+ #  write.table(file=outgenofilename,mat.count,quote=F,col.names=F,row.names=F) 
   }
 }

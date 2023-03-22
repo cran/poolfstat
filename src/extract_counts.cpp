@@ -4,9 +4,27 @@
 using namespace Rcpp;
 //using namespace string;
 
+//' @title scan_allele_info
+//' @name scan_allele_info
+//' @rdname scan_allele_info
+//'
+//' @description
+//' Scan allele information in ALT field of a vcf
+//'
+//' @param allele_info a character string vector (ALT field of the vcf)
+//'
+//' @details
+//' Scan allele information in ALT field of a vcf to identify the number of alleles and if there is indels
+//'
+//' @return Return a vector with two elements consisting i) the number of alleles (1+number of comma)
+//' and ii) 0 or 1 if an indel is detected 
+//' 
+//' @examples
+//' .scan_allele_info(c("A,C","T","AAT"))
+//' 
 //' @export
 // [[Rcpp::export(name=".scan_allele_info")]]
-Rcpp::IntegerMatrix scan_allele_info( Rcpp::StringVector allele_info) {//return a two vector with number of alleles (1+number of,) and 0 or 1 if indel
+Rcpp::IntegerMatrix scan_allele_info( Rcpp::StringVector allele_info) {
   int pos_j=0 ;
   int npos=allele_info.size();
   std::string istring ;
@@ -28,6 +46,31 @@ Rcpp::IntegerMatrix scan_allele_info( Rcpp::StringVector allele_info) {//return 
   return return_matrix;
 }
 
+
+//' @title extract_vscan_counts
+//' @name extract_vscan_counts
+//' @rdname extract_vscan_counts
+//'
+//' @description
+//' Extract VarScan counts
+//'
+//' @param vcf_data a matrix of String containing count information in VarScan format
+//' @param ad_idx the index of the FORMAT AD field  
+//' @param rd_idx the index of the FORMAT RD field 
+//'
+//' @details Extract VarScan counts and return read counts for the reference and alternate allele.
+//' For VarScan generated vcf, SNPs with more than one alternate allele are discarded 
+//' (because only a single count is then reported in the AD fields) making the min.rc unavailable (of vcf2pooldata).
+//' The VarScan --min-reads2 option might replace to some extent the min.rc functionality although 
+//' SNP where the two major alleles in the Pool-Seq data are different from the reference allele 
+//' (e.g., expected to be more frequent when using a distantly related reference genome for mapping) 
+//' will be disregarded.
+//' @return A numeric matrix of read count with nsnp rows and 2*npools columns.
+//' The first npools columns consist of read count for the reference allele (RD),
+//' columns npools+1 to 2*npools consist of read coverage (RD+AD)
+//' @examples
+//' .extract_vscan_counts(rbind(c("0/0:0:20","1/1:18:1"),c("0/1:12:15","1/1:27:2")),3,2)
+//' 
 //' @export
 // [[Rcpp::export(name=".extract_vscan_counts")]]
 Rcpp::NumericMatrix extract_vscan_counts( Rcpp::StringMatrix vcf_data,
@@ -69,7 +112,29 @@ Rcpp::NumericMatrix extract_vscan_counts( Rcpp::StringMatrix vcf_data,
   return return_matrix;
 }
 
-
+//' @title extract_nonvscan_counts
+//' @name extract_nonvscan_counts
+//' @rdname extract_nonvscan_counts
+//'
+//' @description
+//' Extract counts from vcf produced by other caller than VarScan (e.g., bcftools, FreeBayes, GATK)
+//'
+//' @param vcf_data a matrix of String containing count information
+//' @param nb_all a vector containing the number of alleles for the different markers
+//' @param ad_idx the index of the FORMAT AD field  
+//' @param min_rc Minimal allowed read count per base (same as min.rc option in \code{\link{vcf2pooldata}}) 
+//'
+//' @details Extract VarScan counts and return read counts for the reference and alternate allele
+//' @return A numeric matrix of read count with nsnp rows and 2*npools+6 columns.
+//' The first npools columns consist of read count for the reference allele,
+//' columns npools+1 to 2*npools consist of read coverage. The last 6 columns correspond to 
+//' the index of the two most frequent alleles (idx_all1 and idx_all2) and their count (cnt_all1 and cnt_all2);
+//' the min_rc filtering criterion and count of variant (cnt_bases) other than two first most frequent. The min_rc crit is
+//' set to -1 for polymorphisms with more than 2 alleles and with the third most frequent alleles having 
+//' more than min_rc count 
+//' @examples
+//' .extract_nonvscan_counts(rbind(c("0/0:20,0","1/1:1,18"),c("0/2:12,1,15","1/1:27,1,0")),c(2,3),2,0)
+//' .extract_nonvscan_counts(rbind(c("0/0:20,0","1/1:1,18"),c("0/2:12,1,15","1/1:27,1,0")),c(2,3),2,2)
 //' @export
 // [[Rcpp::export(name=".extract_nonvscan_counts")]]
 Rcpp::NumericMatrix extract_nonvscan_counts( Rcpp::StringMatrix vcf_data,
@@ -85,7 +150,7 @@ Rcpp::NumericMatrix extract_nonvscan_counts( Rcpp::StringMatrix vcf_data,
   //   Rcpp::Rcout << vcf_data.nrow() << " " << vcf_data.ncol() << "\n";
   Rcpp::NumericMatrix return_matrix(npos, 2*npools+6);// count ref_allele 1:npools; coverage npools+1:2npools; 
                                                       //idx_all1, idx_all2, cnt_all1, cnt_all2, min_rc crit, cnt_bases other than 1 and 2
-                                                      // min_rc crit is set to -1 for polymorphisms with more than 2 alleles with the third most frequent alleles haveing more than min_rc count 
+                                                      // min_rc crit is set to -1 for polymorphisms with more than 2 alleles with the third most frequent alleles having more than min_rc count 
   Rcpp::NumericMatrix tmp_cnt_alleles(npools+1,nb_all_max) ; //Only useful if nb_all>2 (last rows for the sums over pools)
   Rcpp::IntegerVector allele_idx=seq(0,nb_all_max-1) ;
   for(int m=0;m<npos;m++){
@@ -160,10 +225,30 @@ Rcpp::NumericMatrix extract_nonvscan_counts( Rcpp::StringMatrix vcf_data,
   return return_matrix;
 }
 
+
+
+//' @title extract_allele_names
+//' @name extract_allele_names
+//' @rdname extract_allele_names
+//'
+//' @description
+//' Extract the alleles from the REF and ALT fields
+//'
+//' @param allele_info a character string vector (concatenated REF and ALT field of the vcf)
+//' @param allele_idx Matrix with indexes of the two alleles of interest for the different markers
+//'
+//' @details
+//' Extract the alleles from the REF and ALT fields
+//' 
+//' @return Return a matrix with the two alleles after parsing the alleles info
+//' 
+//' @examples
+//' .extract_allele_names(c("A,C","A,C,T"),rbind(c(1,2),c(1,3)))
+//' 
 //' @export
 // [[Rcpp::export(name=".extract_allele_names")]]
 Rcpp::StringMatrix extract_allele_names( Rcpp::StringVector allele_info,
-                                         Rcpp::IntegerMatrix allele_idx ) {//return a two-dim matrix with the two alleles after parsing the alleles info
+                                         Rcpp::IntegerMatrix allele_idx ) {
   int npos=allele_info.size();
   std::string istring ;
   Rcpp::StringMatrix return_matrix(npos, 2);// allele name for first and second idx
@@ -188,6 +273,28 @@ Rcpp::StringMatrix extract_allele_names( Rcpp::StringVector allele_info,
   return return_matrix;
 }
 
+
+//' @title find_indelneighbor_idx
+//' @name find_indelneighbor_idx
+//' @rdname find_indelneighbor_idx
+//'
+//' @description
+//' Search for the closest indels of the markers
+//'
+//' @param contig a character string vector corresponding to the CHR field value of the vcf for the markers
+//' @param position an integer vector corresponding to the POSITION value for the markers 
+//' @param indels_idx vector of (0-indexed) indices of indels
+//' @param min_dist same as min.dist.from.indels option in \code{\link{vcf2pooldata}}
+//' @param indels_size size of the indels (associated to indels_idx)
+//'
+//' @details
+//' Identify if the SNPs are close to an indel
+//' 
+//' @return Return a vector consisting of 1 (if the marker is close to an indel) or 0 (if not)
+//' 
+//' @examples
+//' .find_indelneighbor_idx(c("chr1","chr1","chr1"),c(1000,1004,1020),1,5,2)
+//' 
 //' @export
 // [[Rcpp::export(name=".find_indelneighbor_idx")]]
 Rcpp::IntegerVector find_indelneighbor_idx( Rcpp::StringVector contig,

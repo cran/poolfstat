@@ -44,7 +44,8 @@ if(sum(is.na(poolnames))>0){
 }
 ###
 pos.all2=(1:npools)*2 ; pos.all1=pos.all2-1
-tmp.data=as.matrix(read.table(genobaypass.file,stringsAsFactors = F))
+tmp.data=as.matrix(fread(file=genobaypass.file,data.table=FALSE))
+#tmp.data=as.matrix(read.table(genobaypass.file,stringsAsFactors = F))
 tmp.Y=tmp.data[,pos.all1]
 tmp.N=tmp.data[,pos.all2]+tmp.Y
 rm(tmp.data)

@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // scan_allele_info
 Rcpp::IntegerMatrix scan_allele_info(Rcpp::StringVector allele_info);
 RcppExport SEXP _poolfstat_scan_allele_info(SEXP allele_infoSEXP) {

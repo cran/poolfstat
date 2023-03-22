@@ -25,7 +25,8 @@
 #' @export
 genobaypass2countdata<-function(genobaypass.file="",snp.pos=NA,popnames=NA,min.indgeno.per.pop=-1,min.maf=-1,verbose=TRUE){
   if(nchar(genobaypass.file)==0){stop("ERROR: Please provide the name of the read count data file (in BayPass format)")}
-  tmp.data=as.matrix(read.table(genobaypass.file,stringsAsFactors = F))  
+  tmp.data=as.matrix(fread(file=genobaypass.file,data.table=FALSE))
+#  tmp.data=as.matrix(read.table(genobaypass.file,stringsAsFactors = F))  
   npops=ncol(tmp.data)/2
   nsnps.tot=nrow(tmp.data)
   cat(npops,"populations and",nsnps.tot,"SNPs read\n")

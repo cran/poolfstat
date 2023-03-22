@@ -3,8 +3,7 @@ citHeader("To cite package 'poolfstat' in publications use:")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
-         
-citEntry(entry="Article",
+bibentry(bibtype="Article",
          author =  "Gautier M., Vitalis R., Flori L. and Estoup A.",
          title = 	 "f-statistics estimation and admixture graph construction with Pool-Seq or allele count data using the R package poolfstat",
          journal = 	 "Molecular Ecology Resources",
@@ -14,7 +13,7 @@ citEntry(entry="Article",
          pages="1394-1416",
          textVersion ="Gautier M, Vitalis R, Flori L and Estoup A (2022). f-statistics estimation and admixture graph construction with Pool-Seq or allele count data using the R package poolfstat. Molecular Ecology Resources, 22(4):1394-1416 (preprint version: hal-03481066)" )
 
-citEntry(entry="Article",
+bibentry(bibtype="Article",
          author = 	 "Hivert V., Leblois R., Petit E.J., Gautier M., and Vitalis R.",
          title = 	 "Measuring genetic differentiation from Pool-seq data",
          journal = 	 "Genetics",
@@ -23,4 +22,3 @@ citEntry(entry="Article",
          number =	 1,
          pages="315-330",
          textVersion ="Hivert V, Leblois R, Petit EJ, Gautier M, and Vitalis R (2018). Measuring genetic differentiation from Pool-seq data. Genetics, 210(1):315-330" )
-

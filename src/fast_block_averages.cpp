@@ -4,6 +4,24 @@ using namespace Rcpp;
 #include <progress.hpp>
 #include <progress_bar.hpp>
 
+//' @title compute_Ddenom
+//' @name compute_Ddenom
+//' @rdname compute_Ddenom
+//'
+//' @description
+//' Compute the denominator of Dstats
+//'
+//' @param snpQ2 the nsnp by (npop*(npop-1))/2 matrix of all pairwise Q2 estimates
+//' @param f2idx a matrix of nDstat by 2 giving the index of the Q2 required to compute the denominator of the different F4 
+//' @param verbose if TRUE progression bar is printed on the terminal
+//'
+//' @details
+//' Compute the denominator of Dstats
+//' 
+//' @return Return a vector of the denominator of the nDstat
+//' 
+//' @examples
+//' #
 //' @export
 // [[Rcpp::export(name=".compute_Ddenom")]]
 Rcpp::NumericVector compute_Ddenom( Rcpp::NumericMatrix snpQ2,
@@ -34,6 +52,25 @@ Rcpp::NumericVector compute_Ddenom( Rcpp::NumericMatrix snpQ2,
   return Denom ;
 }
 
+
+//' @title compute_Q_bjmeans
+//' @name compute_Q_bjmeans
+//' @rdname compute_Q_bjmeans
+//'
+//' @description
+//' Compute the the block-jackknife mean of Q values
+//'
+//' @param snpQ matrix of nsnp by nQ estimates of Q (e.g., Q1 or Q2)
+//' @param snp_bj_id integer vector of length nsnp giving the block index of each SNP 
+//' @param verbose if TRUE progression bar is printed on the terminal
+//'
+//' @details
+//' Compute the the block-jackknife mean of Q values
+//' 
+//' @return Return a vector with the block-jackknife mean estimates for the nQ values
+//' 
+//' @examples
+//' #
 //' @export
 // [[Rcpp::export(name=".compute_Q_bjmeans")]]
 Rcpp::NumericVector compute_Q_bjmeans( Rcpp::NumericMatrix snpQ,
@@ -71,6 +108,27 @@ Rcpp::NumericVector compute_Q_bjmeans( Rcpp::NumericMatrix snpQ,
   return bjmean ;
 }
 
+
+//' @title compute_F2_bjmeans
+//' @name compute_F2_bjmeans
+//' @rdname compute_F2_bjmeans
+//'
+//' @description
+//' Compute the the block-jackknife mean of F2 values
+//'
+//' @param snpQ1 the nsnp by npop matrix of Q1 estimates
+//' @param snpQ2 the nsnp by (npop*(npop-1))/2 matrix of all pairwise Q2 estimates
+//' @param q1_idx the nsnp by 2 matrix with the indexes of the Q1 needed to compute each F2
+//' @param snp_bj_id integer vector of length nsnp giving the block index of each SNP 
+//' @param verbose if TRUE progression bar is printed on the terminal
+//'
+//' @details
+//' Compute the the block-jackknife mean of F2 values
+//' 
+//' @return Return a vector with the block-jackknife mean estimates of the F2 values
+//' 
+//' @examples
+//' #
 //' @export
 // [[Rcpp::export(name=".compute_F2_bjmeans")]]
 Rcpp::NumericVector compute_F2_bjmeans( Rcpp::NumericMatrix snpQ1,
@@ -114,6 +172,25 @@ Rcpp::NumericVector compute_F2_bjmeans( Rcpp::NumericMatrix snpQ1,
   return bjmean ;
 }
 
+//' @title compute_Ddenom_bjmeans
+//' @name compute_Ddenom_bjmeans
+//' @rdname compute_Ddenom_bjmeans
+//'
+//' @description
+//' Compute the the block-jackknife mean of Dstat denominator
+//'
+//' @param snpQ2 the nsnp by (npop*(npop-1))/2 matrix of all pairwise Q2 estimates
+//' @param f2idx a matrix of nDstat by 2 giving the index of the Q2 required to compute the Dstat denominator 
+//' @param snp_bj_id integer vector of length nsnp giving the block index of each SNP 
+//' @param verbose if TRUE progression bar is printed on the terminal
+//'
+//' @details
+//' Compute the the block-jackknife mean of Dstat denominator
+//' 
+//' @return Return a vector with the block-jackknife mean estimates of the Dstat denominator
+//' 
+//' @examples
+//' #
 //' @export
 // [[Rcpp::export(name=".compute_Ddenom_bjmeans")]]
 Rcpp::NumericVector compute_Ddenom_bjmeans( Rcpp::NumericMatrix snpQ2,

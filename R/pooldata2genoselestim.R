@@ -40,7 +40,7 @@ pooldata2genoselestim=function(pooldata,writing.dir=getwd(),prefix="",subsamples
   if(subsampling){
     if(subsamplingmethod=="thinning"){
       tmp.n=floor(pooldata@nsnp/subsamplesize)
-      for(i in 1:(tmp.n-1)){
+      for(i in 1:tmp.n){
         tmp.sel=seq(i,pooldata@nsnp,tmp.n)
         write.table(file=paste0(outsnpdetfilename,".sub",i),pooldata@snp.info[tmp.sel,],quote=F,col.names=F,row.names=F) 
         tmp.genofilename=paste0(outgenofilename,".sub",i)

@@ -8,6 +8,7 @@
 #' @exportMethod plot heatmap
 #' @import graphics
 #' @import RcppProgress
+#' @importFrom data.table fread fwrite
 #' @importFrom utils read.table write.table combn
 #' @importFrom methods is new validObject show
 #' @importFrom foreach foreach getDoParWorkers %dopar%

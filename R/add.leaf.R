@@ -92,9 +92,13 @@ add.leaf<-function(x,leaf.to.add,fstats,only.test.non.admixed.edges=FALSE,only.t
    while(new.node.name.S %in% tmp.input.leaves){new.node.name.S=paste0("S",new.node.name.S)} #in case of... 
    tmp.sel=nchar(x@graph[,3])>0 
    if(sum(tmp.sel)>0){n.adm.nodes=length(unique(x@graph[tmp.sel,1]))}else{n.adm.nodes=0}
-   adm.par.name=rawToChar(as.raw(65+n.adm.nodes))
-   while(length(grep(adm.par.name,x@graph[,3]))>0){adm.par.name=paste0("a",adm.par.name)} #in case of... 
-   
+   if(n.adm.nodes<25){
+     #do not include I as a name because bug when evaluating with yacas (i.e., interpret as complex)
+     adm.par.name=LETTERS[-9][n.adm.nodes+1] #rawToChar(as.raw(65+n.adm.nodes))
+   }else{#unlikely but never know
+     adm.par.name=paste0(LETTERS[-9][n.adm.nodes%%25+1],letters[-9][floor(n.adm.nodes/25)])
+   }  
+   while(length(grep(adm.par.name,x@graph[,3]))>0){adm.par.name=paste0("n",adm.par.name)} #in case of...   
    n.eval=n.input.non.adm.edges*(n.input.non.adm.edges-1)/2 - 1 #il faut retirer evenement impliquant les 2 root edges
    if(print.extra.info){cat(" ",n.eval,"possible graphs connecting",leaf.to.add,"with admixed edges\n")}   
    edges.pair.idx=t(combn(1:nrow(x@graph),2))
