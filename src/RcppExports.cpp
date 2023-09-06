@@ -130,6 +130,152 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// compute_H1
+Rcpp::NumericMatrix compute_H1(Rcpp::IntegerMatrix refcount, Rcpp::IntegerMatrix totcount, int nblocks, Rcpp::IntegerVector block_id, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_H1(SEXP refcountSEXP, SEXP totcountSEXP, SEXP nblocksSEXP, SEXP block_idSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< int >::type nblocks(nblocksSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type block_id(block_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_H1(refcount, totcount, nblocks, block_id, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_Q2
+Rcpp::NumericMatrix compute_Q2(Rcpp::IntegerMatrix refcount, Rcpp::IntegerMatrix totcount, int nblocks, Rcpp::IntegerVector block_id, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_Q2(SEXP refcountSEXP, SEXP totcountSEXP, SEXP nblocksSEXP, SEXP block_idSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< int >::type nblocks(nblocksSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type block_id(block_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_Q2(refcount, totcount, nblocks, block_id, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_F3fromF2
+Rcpp::NumericMatrix compute_F3fromF2(Rcpp::NumericVector F2val, Rcpp::NumericVector Hval, int npops);
+RcppExport SEXP _poolfstat_compute_F3fromF2(SEXP F2valSEXP, SEXP HvalSEXP, SEXP npopsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type F2val(F2valSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type Hval(HvalSEXP);
+    Rcpp::traits::input_parameter< int >::type npops(npopsSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_F3fromF2(F2val, Hval, npops));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_F3fromF2samples
+Rcpp::NumericMatrix compute_F3fromF2samples(Rcpp::NumericMatrix blockF2, Rcpp::NumericMatrix blockHet, int npops, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_F3fromF2samples(SEXP blockF2SEXP, SEXP blockHetSEXP, SEXP npopsSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type blockF2(blockF2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type blockHet(blockHetSEXP);
+    Rcpp::traits::input_parameter< int >::type npops(npopsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_F3fromF2samples(blockF2, blockHet, npops, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// generateF3names
+Rcpp::StringMatrix generateF3names(Rcpp::StringVector popnames);
+RcppExport SEXP _poolfstat_generateF3names(SEXP popnamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type popnames(popnamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(generateF3names(popnames));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_F4fromF2
+Rcpp::NumericVector compute_F4fromF2(Rcpp::NumericVector F2val, int npops);
+RcppExport SEXP _poolfstat_compute_F4fromF2(SEXP F2valSEXP, SEXP npopsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type F2val(F2valSEXP);
+    Rcpp::traits::input_parameter< int >::type npops(npopsSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_F4fromF2(F2val, npops));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_F4fromF2samples
+Rcpp::NumericMatrix compute_F4fromF2samples(Rcpp::NumericMatrix blockF2, int npops, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_F4fromF2samples(SEXP blockF2SEXP, SEXP npopsSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type blockF2(blockF2SEXP);
+    Rcpp::traits::input_parameter< int >::type npops(npopsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_F4fromF2samples(blockF2, npops, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_F4DfromF2samples
+Rcpp::NumericMatrix compute_F4DfromF2samples(Rcpp::NumericMatrix blockF2, Rcpp::NumericMatrix blockDenom, int npops, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_F4DfromF2samples(SEXP blockF2SEXP, SEXP blockDenomSEXP, SEXP npopsSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type blockF2(blockF2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type blockDenom(blockDenomSEXP);
+    Rcpp::traits::input_parameter< int >::type npops(npopsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_F4DfromF2samples(blockF2, blockDenom, npops, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_blockDdenom
+Rcpp::NumericMatrix compute_blockDdenom(Rcpp::IntegerMatrix refcount, Rcpp::IntegerMatrix totcount, int nblocks, Rcpp::IntegerVector block_id, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_blockDdenom(SEXP refcountSEXP, SEXP totcountSEXP, SEXP nblocksSEXP, SEXP block_idSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< int >::type nblocks(nblocksSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type block_id(block_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_blockDdenom(refcount, totcount, nblocks, block_id, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// generateF4names
+Rcpp::StringMatrix generateF4names(Rcpp::StringVector popnames);
+RcppExport SEXP _poolfstat_generateF4names(SEXP popnamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type popnames(popnamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(generateF4names(popnames));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_QmatfromF2samples
+Rcpp::NumericMatrix compute_QmatfromF2samples(Rcpp::NumericMatrix blockF2, int npops, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_QmatfromF2samples(SEXP blockF2SEXP, SEXP npopsSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type blockF2(blockF2SEXP);
+    Rcpp::traits::input_parameter< int >::type npops(npopsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_QmatfromF2samples(blockF2, npops, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_poolfstat_scan_allele_info", (DL_FUNC) &_poolfstat_scan_allele_info, 1},
@@ -141,6 +287,17 @@ static const R_CallMethodDef CallEntries[] = {
     {"_poolfstat_compute_Q_bjmeans", (DL_FUNC) &_poolfstat_compute_Q_bjmeans, 3},
     {"_poolfstat_compute_F2_bjmeans", (DL_FUNC) &_poolfstat_compute_F2_bjmeans, 5},
     {"_poolfstat_compute_Ddenom_bjmeans", (DL_FUNC) &_poolfstat_compute_Ddenom_bjmeans, 4},
+    {"_poolfstat_compute_H1", (DL_FUNC) &_poolfstat_compute_H1, 5},
+    {"_poolfstat_compute_Q2", (DL_FUNC) &_poolfstat_compute_Q2, 5},
+    {"_poolfstat_compute_F3fromF2", (DL_FUNC) &_poolfstat_compute_F3fromF2, 3},
+    {"_poolfstat_compute_F3fromF2samples", (DL_FUNC) &_poolfstat_compute_F3fromF2samples, 4},
+    {"_poolfstat_generateF3names", (DL_FUNC) &_poolfstat_generateF3names, 1},
+    {"_poolfstat_compute_F4fromF2", (DL_FUNC) &_poolfstat_compute_F4fromF2, 2},
+    {"_poolfstat_compute_F4fromF2samples", (DL_FUNC) &_poolfstat_compute_F4fromF2samples, 3},
+    {"_poolfstat_compute_F4DfromF2samples", (DL_FUNC) &_poolfstat_compute_F4DfromF2samples, 4},
+    {"_poolfstat_compute_blockDdenom", (DL_FUNC) &_poolfstat_compute_blockDdenom, 5},
+    {"_poolfstat_generateF4names", (DL_FUNC) &_poolfstat_generateF4names, 1},
+    {"_poolfstat_compute_QmatfromF2samples", (DL_FUNC) &_poolfstat_compute_QmatfromF2samples, 3},
     {NULL, NULL, 0}
 };
 

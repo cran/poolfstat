@@ -1,3 +1,21 @@
+Changes from Version 2.1.2 to 2.2.0 [September 06 2023]
+
+* Major modifications:
+** reimplementation of the compute.fstats function to improve memory usage and increase speed (> 1 order of magnitude).
+
+* Adding two new functions:
+** randomallele.pca to perform PCA on pooldata (or countdata) objects after randomly sampling one read or count per population and SNP to make the representation unaffected by differences in pool (pop) sample size and/or read coverage (or Pool-Seq data).
+** pooldata2diyabc to convert a pooldata object into DIYABC genotype data file
+
+* Other modifications
+** adding computation of pairwise-population divergence (1-Q2) in compute.fstats
+** adding option return.F2.blockjackknife.samples in compute.fstats to export estimates of all pairwise F2 for each block-jackknife blocks. The obtained array is compatible with functions from the admixtools2 package
+** adding option output.pairwise.fst and output.pairwise.div to the compute.fstats function
+** reimplementation of the compute.F4ratio function to estimate F4 ratio from F2 and F2 block-jackknife samples (rather than F4)
+** fixing minor bug in vcf2pooldata to allow proper parsing of vcf generated with snpEff
+** correction of roxygen issue
+** update and editing of the vignette
+
 Changes from Version 2.1.1 to 2.1.2 [March 22 2023]
 
 * Fixing a bug in the pooldata2genobaypass and pooldata2genoselestim export function (the last subset is now printed when using thinning option)

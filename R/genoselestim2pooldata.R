@@ -1,5 +1,5 @@
 #' Convert SelEstim read count input files into a pooldata object
-#' @param genoselestim.file The name (or a path) of the SelEstim read count file (see the SelEstim manual \url{http://www1.montpellier.inra.fr/CBGP/software/selestim/})
+#' @param genoselestim.file The name (or a path) of the SelEstim read count file (see the SelEstim manual \url{https://www1.montpellier.inrae.fr/CBGP/software/selestim/})
 #' @param poolnames A character vector with the names of pool
 #' @param min.cov.per.pool Minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded
 #' @param max.cov.per.pool Maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded

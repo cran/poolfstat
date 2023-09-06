@@ -9,6 +9,11 @@
 #' \item "nblocks": A scalar corresponding to the number of blocks
 #' \item "nsnps": Number of SNPs eligible for block-jackknife 'i.e., included in one block
 #' }
+#' @examples
+#' make.example.files(writing.dir=tempdir())
+#' pooldata=popsync2pooldata(sync.file=paste0(tempdir(),"/ex.sync.gz"),poolsizes=rep(50,15))
+#' bjack.blocks=generate.jackknife.blocks(pooldata,nsnp.per.bjack.block=50)
+#' @export
 generate.jackknife.blocks<-function(x,nsnp.per.bjack.block,verbose=TRUE){
   tmp.pos=x@snp.info[,2]
   det.idx.per.chr=matrix(unlist(by(1:x@nsnp,x@snp.info[,1],range)),ncol=2,byrow=T)

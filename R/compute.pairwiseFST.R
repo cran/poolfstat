@@ -24,6 +24,7 @@ compute.pairwiseFST<-function(x,method="Anova",min.cov.per.pool=-1,max.cov.per.p
   if(is.countdata(x)){npops=x@npops ; popnames=x@popnames ; pooldata=FALSE}  
 
   if(npops<3){stop("At least 3 pools (or pops) should be given to compute the matrix")}
+  if(npops>20){warning("with >20 pop samples it is recommended to utilize the compute.fstats function (significantly faster and far more memory-efficient) to obtain the pairwise FST matrix (pairwise.fst slot of the fstats output object) that can be visualized using heatmap or other conventional clustering techniques (see the vignette).")}
   time1=proc.time()
     
   out=new("pairwisefst")

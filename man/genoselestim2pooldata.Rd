@@ -15,7 +15,7 @@ genoselestim2pooldata(
 )
 }
 \arguments{
-\item{genoselestim.file}{The name (or a path) of the SelEstim read count file (see the SelEstim manual \url{http://www1.montpellier.inra.fr/CBGP/software/selestim/})}
+\item{genoselestim.file}{The name (or a path) of the SelEstim read count file (see the SelEstim manual \url{https://www1.montpellier.inrae.fr/CBGP/software/selestim/})}
 
 \item{poolnames}{A character vector with the names of pool}
 

@@ -130,6 +130,45 @@
     .Call('_poolfstat_find_indelneighbor_idx', PACKAGE = 'poolfstat', contig, position, indels_idx, min_dist, indels_size)
 }
 
+#' @title poppair_idx
+#' @name poppair_idx
+#' @rdname poppair_idx
+#'
+#' @description
+#' Compute the index of the pairwise comparison from the idx of each pop
+#'
+#' @param idx_pop1 Integer giving the (0-indexed) index of the first pop 
+#' @param idx_pop2 Integer giving the (0-indexed) index of the second pop 
+#' @param nidx Integer giving the total number of indexes (i.e., number of pops)
+#'
+#' @details
+#' If idx_pop2 < idx_pop1, indexes are reversed
+#' 
+#' @return Return the (0-indexed) index for the row associated to the pairwise comparison in the ordered flat list of all (npop*(npop-1))/2 pairwise stats
+#' 
+#' @examples
+#' #
+NULL
+
+#' @title bjack_cov
+#' @name bjack_cov
+#' @rdname bjack_cov
+#'
+#' @description
+#' Compute the block-jackknife covariance between two stats
+#'
+#' @param stat1 Vector of block-jackknife values for the first stat
+#' @param stat2 Vector of block-jackknife values for the second stat
+#'
+#' @details
+#'  Compute the block-jackknife covariance between two stats with correction
+#' 
+#' @return Covariance values
+#' 
+#' @examples
+#' #
+NULL
+
 #' @title compute_Ddenom
 #' @name compute_Ddenom
 #' @rdname compute_Ddenom
@@ -223,5 +262,262 @@
 #' @export
 .compute_Ddenom_bjmeans <- function(snpQ2, f2idx, snp_bj_id, verbose) {
     .Call('_poolfstat_compute_Ddenom_bjmeans', PACKAGE = 'poolfstat', snpQ2, f2idx, snp_bj_id, verbose)
+}
+
+#' @title compute_H1
+#' @name compute_H1
+#' @rdname compute_H1
+#'
+#' @description
+#' Compute (uncorrected) 1-Q1 for each block-jackknife block (if any) and over all the SNPs (i.e., either within or outside blocks)
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param nblocks Integer giving the number of block-jackknife blocs (may be 0 if no block-jackknife)
+#' @param block_id Integer vector of length nsnps with the (0-indexed) id of the block to which each SNP belongs (-1 for SNPs outside blocks)
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute all the (uncorrected) H1=1-Q1 for each block-jackknife block (if any) and overall SNPs (within or outside blocks). 
+#' It is indeed more convenient to compute H1 (rather than Q1) to apply corrections afterwards within R function 
+#' 
+#' @return Return a matrix with npops rows and nblocks+1 column giving the mean H1 of each pop within each block and for all SNPs (last column)
+#' 
+#' @examples
+#' #
+#' @export
+.compute_H1 <- function(refcount, totcount, nblocks, block_id, verbose) {
+    .Call('_poolfstat_compute_H1', PACKAGE = 'poolfstat', refcount, totcount, nblocks, block_id, verbose)
+}
+
+#' @title compute_Q2
+#' @name compute_Q2
+#' @rdname compute_Q2
+#'
+#' @description
+#' Compute all Q2 for each block-jackknife block (if any) and overall SNPs (within or outside blocks)
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param nblocks Integer giving the number of block-jackknife blocs (may be 0 if no block-jackknife)
+#' @param block_id Integer vector of length nsnps with the (0-indexed) id of the block to which each SNP belongs (-1 for SNPs outside blocks)
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute all Q2 for each block-jackknife block (if any) and overall SNPs (within or outside blocks). 
+#' 
+#' @return Return a matrix with npops*(npops-1)/2 and nblocks+1 column giving the mean Q2 of each pairwise pop comp. within each block and for all SNPs (last column)
+#' 
+#' @examples
+#' #
+#' @export
+.compute_Q2 <- function(refcount, totcount, nblocks, block_id, verbose) {
+    .Call('_poolfstat_compute_Q2', PACKAGE = 'poolfstat', refcount, totcount, nblocks, block_id, verbose)
+}
+
+#' @title compute_F3fromF2
+#' @name compute_F3fromF2
+#' @rdname compute_F3fromF2
+#'
+#' @description
+#' Compute all F3 from overall F2 values
+#'
+#' @param F2val Numeric vector of length nF2=(npop*(npop-1))/2 with all pairwise F2 estimates
+#' @param Hval Numeric vector of length npop with all within pop heterozygosity estimates
+#' @param npops Integer giving the number of populations
+#'
+#' @details
+#' Compute F3 and F3star estimates from F2 (and heterozygosities)
+#' 
+#' @return Return a matrix of length nF3=npops*(npops-1)*(npops-2)/2 rows and 2 columns corresponding to the F3 and F3star estimates
+#' 
+#' @examples
+#' #
+#' @export
+.compute_F3fromF2 <- function(F2val, Hval, npops) {
+    .Call('_poolfstat_compute_F3fromF2', PACKAGE = 'poolfstat', F2val, Hval, npops)
+}
+
+#' @title compute_F3fromF2samples
+#' @name compute_F3fromF2samples
+#' @rdname compute_F3fromF2samples
+#'
+#' @description
+#' Compute all F3 from F2 values obtained from each block-jackknife bloc
+#'
+#' @param blockF2 Numeric Matrix with nF2=(npop*(npop-1))/2 rows and nblocks columns matrix containing pairwise-pop F2 estimates for each block-jackknife sample (l.o.o.)
+#' @param blockHet Numeric Matrix with npop rows and nblocks columns containing all within pop heterozygosity estimates for each block-jackknife sample (l.o.o.)
+#' @param npops Integer giving the number of populations
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute F3 and F3star estimates and their s.e. based on block-jackknife estimates of all F2 (and heterozygosities)
+#' 
+#' @return Return a matrix with nF3=npops*(npops-1)*(npops-2)/2 rows and four columns corresponding to the mean and the s.e. of F3 and the mean and s.e. of F3star
+#' 
+#' @examples
+#' #
+#' @export
+.compute_F3fromF2samples <- function(blockF2, blockHet, npops, verbose) {
+    .Call('_poolfstat_compute_F3fromF2samples', PACKAGE = 'poolfstat', blockF2, blockHet, npops, verbose)
+}
+
+#' @title generateF3names
+#' @name generateF3names
+#' @rdname generateF3names
+#'
+#' @description
+#' Generate all names for F3 stats (same order as computation)
+#'
+#' @param popnames String vector with the names of all the pops
+#'
+#' @details
+#' Generate all the npops*(npops-1)*(npops-2)/2 names for F3 stats (same order as computation)
+#' 
+#' @return Return a string matrix with 4 columns including the complete F3 configuration names (of the form Px;P1,P2), and the names of each pop involved in the configuration
+#' 
+#' @examples
+#' #
+#' @export
+.generateF3names <- function(popnames) {
+    .Call('_poolfstat_generateF3names', PACKAGE = 'poolfstat', popnames)
+}
+
+#' @title compute_F4fromF2
+#' @name compute_F4fromF2
+#' @rdname compute_F4fromF2
+#'
+#' @description
+#' Compute all F4 from overall F2 and Q2 values
+#'
+#' @param F2val Numeric vector of length nF2=(npop*(npop-1))/2 with all pairwise F2 estimates
+#' @param npops Integer giving the number of populations
+#'
+#' @details
+#' Compute F4 from F2 (and heterozygosities)
+#' 
+#' @return Return a vector of length nF4=(npops*(npops-1)/2) * ((npops-2)*(npops-3)/2) / 2 rows corresponding to all the F4 estimates for all possible configurations
+#' 
+#' @examples
+#' #
+#' @export
+.compute_F4fromF2 <- function(F2val, npops) {
+    .Call('_poolfstat_compute_F4fromF2', PACKAGE = 'poolfstat', F2val, npops)
+}
+
+#' @title compute_F4fromF2samples
+#' @name compute_F4fromF2samples
+#' @rdname compute_F4fromF2samples
+#'
+#' @description
+#' Compute all F4 from F2 values obtained from each block-jackknife bloc
+#'
+#' @param blockF2 Numeric Matrix with nF2=(npop*(npop-1))/2 rows and nblocks columns matrix containing pairwise-pop F2 estimates for each block-jackknife sample (l.o.o.)
+#' @param npops Integer giving the number of populations
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute F4 estimates and their s.e. based on block-jackknife estimates of all F2 (and heterozygosities)
+#' 
+#' @return Return a matrix with nF4=(npops*(npops-1)/2) * ((npops-2)*(npops-3)/2) / 2 rows and two columns corresponding to the mean and the s.e. of F4 estimates for all possible configurations
+#' 
+#' @examples
+#' #
+#' @export
+.compute_F4fromF2samples <- function(blockF2, npops, verbose) {
+    .Call('_poolfstat_compute_F4fromF2samples', PACKAGE = 'poolfstat', blockF2, npops, verbose)
+}
+
+#' @title compute_F4DfromF2samples
+#' @name compute_F4DfromF2samples
+#' @rdname compute_F4DfromF2samples
+#'
+#' @description
+#' Compute all F4 and Dstat from F2 values obtained from each block-jackknife bloc
+#'
+#' @param blockF2 Numeric Matrix with nF2=(npop*(npop-1))/2 rows and nblocks columns matrix containing pairwise-pop F2 estimates for each block-jackknife sample (l.o.o.)
+#' @param blockDenom Numeric Matrix with nF4=(npops*(npops-1)/2)*((npops-2)*(npops-3)/2)/2 rows and nblocks containing the estimates of the denominator of Dstat (see compute_blockDdenom) for each block-jackknife sample (l.o.o.) 
+#' @param npops Integer giving the number of populations
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute F4 and D estimates and their s.e. based on block-jackknife estimates of all F2 (and heterozygosities)
+#' 
+#' @return Return a matrix with nF4=(npops*(npops-1)/2)*((npops-2)*(npops-3)/2)/2 rows and four columns corresponding to the mean and the s.e. of F4 and the mean and s.e. of Dstat
+#' 
+#' @examples
+#' #
+#' @export
+.compute_F4DfromF2samples <- function(blockF2, blockDenom, npops, verbose) {
+    .Call('_poolfstat_compute_F4DfromF2samples', PACKAGE = 'poolfstat', blockF2, blockDenom, npops, verbose)
+}
+
+#' @title compute_blockDdenom
+#' @name compute_blockDdenom
+#' @rdname compute_blockDdenom
+#'
+#' @description
+#' Compute the denominator of the Dstat for all quadruplet configuration and each block-jackknife block (if any) and overall SNPs (within or outside blocks)
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param nblocks Integer giving the number of block-jackknife blocs (may be 0 if no block-jackknife)
+#' @param block_id Integer vector of length nsnps with the (0-indexed) id of the block to which each SNP belongs (-1 for SNPs outside blocks)
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute the denominator of the Dstat for all quadruplet configuration and each block-jackknife block (if any) and overall SNPs (within or outside blocks)
+#' 
+#' @return Return a matrix with nf4=(npops*(npops-1)/2)*((npops-2)*(npops-3)/2)/2 rows and nblocks+1 columns giving the mean Dstat-denominator (1-Q2ab)(1-Q2cd)
+#'  for all quadruplet configuration and within each block-jackknife sample and over all SNPs (last column)
+#' 
+#' @examples
+#' #
+#' @export
+.compute_blockDdenom <- function(refcount, totcount, nblocks, block_id, verbose) {
+    .Call('_poolfstat_compute_blockDdenom', PACKAGE = 'poolfstat', refcount, totcount, nblocks, block_id, verbose)
+}
+
+#' @title generateF4names
+#' @name generateF4names
+#' @rdname generateF4names
+#'
+#' @description
+#' Generate all names for F4 stats (same order as computation)
+#'
+#' @param popnames String vector with the names of all the pops
+#'
+#' @details
+#' Generate all the nf4=(npops*(npops-1)/2)*((npops-2)*(npops-3)/2)/2 names for F4 stats (same order as computation)
+#' 
+#' @return Return a string matrix with 5 columns including the complete F4 configuration names (of the form P1,P2;P3,P4), and the names of each pop involved in the configuration
+#' 
+#' #
+#' @export
+.generateF4names <- function(popnames) {
+    .Call('_poolfstat_generateF4names', PACKAGE = 'poolfstat', popnames)
+}
+
+#' @title compute_QmatfromF2samples
+#' @name compute_QmatfromF2samples
+#' @rdname compute_QmatfromF2samples
+#'
+#' @description
+#' Compute the Qmat matrix (error covariance between all F2 and F3 measures) from F2 block-jackknife estimates
+#'
+#' @param blockF2 Numeric Matrix with nF2=(npop*(npop-1))/2 rows and nblocks columns matrix containing pairwise-pop F2 estimates for each block-jackknife sample (l.o.o.)
+#' @param npops Integer giving the number of populations
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute the error covariance matrix Qmat (between all F2 and F3 measures) from F2 block-jackknife estimates (by recomuting all F3 for all blocks)
+#' 
+#' @return Return the (nF2+nF3)*(nF2+nF3) error covariance (symmetric) matrix
+#' 
+#' @examples
+#' #
+#' @export
+.compute_QmatfromF2samples <- function(blockF2, npops, verbose) {
+    .Call('_poolfstat_compute_QmatfromF2samples', PACKAGE = 'poolfstat', blockF2, npops, verbose)
 }
 

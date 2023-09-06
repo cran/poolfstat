@@ -14,7 +14,7 @@ compute.f4ratio(x, num.quadruplet, den.quadruplet)
 \item{den.quadruplet}{A character vector for the F4 quadruplet used in the F4ratio denominator (should be of the form "A,O;C,B" where A, O, C and B are the names of the populations as defined in the countdata or pooldata object used to obtain fstats, see details))}
 }
 \value{
-Either a scalar corresponding to the estimated admixture rate or, if F4 block-jackknife samples are available in the input fstats object (i.e., compute.fstats was run with return.F4.blockjackknife.samples = TRUE) a vector with three elements corresponding to the estimate of the admixture rate, the block-jacknife mean (may be slightly different than the previous since not exactly the same set of markers are used) and the standard error of the estimates.
+Either a scalar corresponding to the estimated admixture rate or, if F2 block-jackknife samples are available in the input fstats object (i.e., compute.fstats was run with return.F2.blockjackknife.samples = TRUE) a vector with three elements corresponding to the estimate of the admixture rate, the block-jacknife mean (may be slightly different than the previous since not exactly the same set of markers are used) and the standard error of the estimates.
 }
 \description{
 Compute F4ratio (estimation of admixture rate) from an fstats object

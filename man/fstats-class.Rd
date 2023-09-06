@@ -23,13 +23,19 @@ S4 class to represent fstats results obtained with computeFstats.
 
 \item{\code{Dstat.values}}{A data frame with npops(npops-1)(npops-2)(npops-3)/8 rows and 1 (or 4 if blockjackknife is TRUE) columns containing estimates of the D-statistics (scaled f4-statistics) over all the SNPs and if blockjackknife=TRUE, the estimated block-jackknife and standard error (s.e.) and Z-score measuring the deviation of the f3-statistics from 0 in units of s.e. For a given quadruplet (A,B;C,D), the parameter D corresponds to F4(A,B;C,D) scaled by (1-Q2(A,B))*(1-Q2(C,D)) where Q2(X,Y) is the is the AIS probability between the X and Y populations.}
 
-\item{\code{F4.bjack.samples}}{If blockjackknife=TRUE and options return.F4.blockjackknife.samples is actived in compute.fstats, a matrix with npops(npops-1)(npops-2)(npops-3)/8 rows and nblock.jackknife samples columns}
+\item{\code{F2.bjack.samples}}{If blockjackknife=TRUE and options return.F2.blockjackknife.samples is actived in compute.fstats, an array of dimension (npop x npop x nblocks) in an admixtools2 compatible format}
 
 \item{\code{comparisons}}{A list containing matrices with population names associated to the different test comparisons (e.g., the "F2" elements of the list is a npop(npop-1)/2 rows x 2 columns with each row containing the name of the two populations compared)}
 
 \item{\code{Q.matrix}}{The estimated error covariance matrix for all the F2 and F3 estimates (required by graph fitting functions to compute graph scores)}
 
 \item{\code{heterozygosities}}{A data frame with npop rows and 1 (or 3 if blockjackknife is TRUE) columns containing estimates of the within population heterozygosities (1-Q1) over all the SNPs and if blockjackknife=TRUE, the estimated block-jackknife and standard error (s.e.)}
+
+\item{\code{divergence}}{A data frame with npop(npop-1)/2 rows and 1 (or 3 if blockjackknife is TRUE) column(s) containing estimates of each population pairwise (absolute) divergence (1-Q2) over all the SNPs and if blockjackknife=TRUE, the estimated block-jackknife and standard error (s.e.). This statistic is related to dXY (a.k.a. PiXY) but it is computed on the ascertained SNPs that were included in the original pooldata or countdata objects.}
+
+\item{\code{pairwise.fst}}{A npop x npop (symmetric) matrix containing the pairwise-population Fst estimates (same as in the fst.values object) that may directly be visualized with e.g. heatmap function or used with a clustering function (e.g., hclust).}
+
+\item{\code{pairwise.div}}{A npop x npop (symmetric) matrix containing the pairwise-population divergence (1-Q2) estimates (same as in the fst.values object) that may directly be visualized with e.g. heatmap function or used with a clustering function (e.g., hclust).}
 
 \item{\code{blockjacknife}}{A logical indicating whether block-jackknife estimates of standard errors are available (TRUE) or not (FALSE)}
 }}

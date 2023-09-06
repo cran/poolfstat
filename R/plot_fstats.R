@@ -1,6 +1,6 @@
 #' Plot F2, F3, F3star, F4, D or pairwise Fst values with their Confidence Intervals
-#' @param x An object of class fstats (to plot F2, F3 or F4 statistics) or pairwisefst (to plot pairwise fst)
-#' @param stat.name For fstats object, the name of the stat (either F2, F3, F3star, F4 or Dstat)
+#' @param x An object of class fstats (to plot heterozygosities, divergence, F2, F3, F3star, F4 or D statistics) or pairwisefst (to plot pairwise fst)
+#' @param stat.name For fstats object, the name of the stat (either heterozygosities, divergence, F2, F3, F3star, F4 or Dstat)
 #' @param ci.perc Percentage of the Confidence Interval in number of standard errors (default=95\%)
 #' @param value.range Range of test values (x-axis) to be plotted (default=NA,NA: i.e., all test values are plotted)
 #' @param pop.sel Only plot test values involving these populations (default=NA: i.e., all test values are plotted)
@@ -38,9 +38,11 @@ plot_fstats <- function(x, stat.name="F2",ci.perc = 95,value.range=c(NA,NA),pop.
     dum.pops=matrix(unlist(strsplit(rownames(tmp.x),split="[;]")),nrow=nrow(tmp.x),byrow=T)
     stat.name="Fst"
   }else{
-      if(!(stat.name %in% c("F2","F3","F4","Fst","F3star","Dstat"))){
-        cat("stat.name should either be equal to F2, F3, F3star, F4, F4star or Fst for a fstats object to be plotted\n")
+      if(!(stat.name %in% c("heterozygosities", "divergence","F2","F3","F4","Fst","F3star","Dstat"))){
+        cat("stat.name should either be equal to heterozygosities, divergence, F2, F3, F3star, F4, F4star or Fst for a fstats object to be plotted\n")
         stop("")}
+    if(stat.name=="heterozygosities"){tmp.x=x@heterozygosities[,2:3]}
+    if(stat.name=="divergence"){tmp.x=x@divergence[,2:3]}
     if(stat.name=="F2"){tmp.x=x@f2.values[,2:3]}
     if(stat.name=="Fst"){tmp.x=x@fst.values[,2:3]}    
     if(stat.name=="F3"){tmp.x=x@f3.values[,2:3]}

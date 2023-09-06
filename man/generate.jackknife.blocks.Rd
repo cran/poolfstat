@@ -25,3 +25,8 @@ A list with the two following elements:
 \description{
 Generate block coordinates for block-jackknife
 }
+\examples{
+make.example.files(writing.dir=tempdir())
+pooldata=popsync2pooldata(sync.file=paste0(tempdir(),"/ex.sync.gz"),poolsizes=rep(50,15))
+bjack.blocks=generate.jackknife.blocks(pooldata,nsnp.per.bjack.block=50)
+}

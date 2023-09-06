@@ -17,9 +17,9 @@ plot_fstats(
 )
 }
 \arguments{
-\item{x}{An object of class fstats (to plot F2, F3 or F4 statistics) or pairwisefst (to plot pairwise fst)}
+\item{x}{An object of class fstats (to plot heterozygosities, divergence, F2, F3, F3star, F4 or D statistics) or pairwisefst (to plot pairwise fst)}
 
-\item{stat.name}{For fstats object, the name of the stat (either F2, F3, F3star, F4 or Dstat)}
+\item{stat.name}{For fstats object, the name of the stat (either heterozygosities, divergence, F2, F3, F3star, F4 or Dstat)}
 
 \item{ci.perc}{Percentage of the Confidence Interval in number of standard errors (default=95\%)}
 

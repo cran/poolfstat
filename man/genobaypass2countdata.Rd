@@ -14,7 +14,7 @@ genobaypass2countdata(
 )
 }
 \arguments{
-\item{genobaypass.file}{The name (or a path) of the BayPass allele count file (see the BayPass manual \url{http://www1.montpellier.inra.fr/CBGP/software/baypass/})}
+\item{genobaypass.file}{The name (or a path) of the BayPass allele count file (see the BayPass manual \url{https://forgemia.inra.fr/mathieu.gautier/baypass_public/})}
 
 \item{snp.pos}{An optional two column matrix with nsnps rows containing the chromosome (or contig/scaffold) of origin and the position of each markers}
 

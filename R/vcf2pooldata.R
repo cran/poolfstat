@@ -37,7 +37,7 @@ vcf2pooldata<-function(vcf.file="",poolsizes=NA,poolnames=NA,min.cov.per.pool=-1
   continue.reading=TRUE
   nlines.header=0
   while(continue.reading){
-    tmp.data=scan(file=file.con,nlines = 1,what="character",quiet=TRUE)
+    tmp.data=scan(file=file.con,nlines = 1,what="character",quiet=TRUE,quote=NULL)
     nlines.header=nlines.header+1
     if(tmp.data[1]=="#CHROM"){continue.reading=FALSE}
     if(substr(tmp.data[1],1,1)!="#"){
@@ -70,7 +70,7 @@ vcf2pooldata<-function(vcf.file="",poolsizes=NA,poolnames=NA,min.cov.per.pool=-1
   #recup format (and check if vcf file is empty: i.e., no lines)
   #######
   file.con2=file(vcf.file,open="r") 
-  tmp.data=scan(file=file.con2,nlines = 1,skip=nlines.header,what="character",quiet=TRUE)
+  tmp.data=scan(file=file.con2,nlines = 1,skip=nlines.header,what="character",quiet=TRUE,quote=NULL)
   close(file.con2)
   if(length(tmp.data)==0){
     continue.reading=FALSE
@@ -101,7 +101,7 @@ vcf2pooldata<-function(vcf.file="",poolsizes=NA,poolnames=NA,min.cov.per.pool=-1
   nlines.read=0
   if(verbose){cat("Parsing allele counts\n")}
   while(continue.reading){
-    tmp.data=matrix(scan(file=file.con,nlines = nlines.per.readblock,what="character",quiet=TRUE),ncol=npools+9,byrow=T) 
+    tmp.data=matrix(scan(file=file.con,nlines = nlines.per.readblock,what="character",quiet=TRUE,quote=NULL),ncol=npools+9,byrow=T) 
     tmp.nlines.read=nrow(tmp.data)
     if(tmp.nlines.read<nlines.per.readblock){continue.reading=FALSE}
     #discard monomorphic positions
