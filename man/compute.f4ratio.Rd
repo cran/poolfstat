@@ -9,12 +9,12 @@ compute.f4ratio(x, num.quadruplet, den.quadruplet)
 \arguments{
 \item{x}{A fstats object containing estimates of fstats}
 
-\item{num.quadruplet}{A character vector for the F4 quadruplet used in the F4ratio numerator (should be of the form "A,O;C,X" where A, O, C and X are the names of the population as defined in the countdata or pooldata object used to obtain fstats, see details)}
+\item{num.quadruplet}{A character string for the F4 quadruplet used in the F4ratio numerator (should be of the form "A,O;C,X" where A, O, C and X are the names of the population as defined in the countdata or pooldata object used to obtain fstats, see details)}
 
-\item{den.quadruplet}{A character vector for the F4 quadruplet used in the F4ratio denominator (should be of the form "A,O;C,B" where A, O, C and B are the names of the populations as defined in the countdata or pooldata object used to obtain fstats, see details))}
+\item{den.quadruplet}{A character string for the F4 quadruplet used in the F4ratio denominator (should be of the form "A,O;C,B" where A, O, C and B are the names of the populations as defined in the countdata or pooldata object used to obtain fstats, see details))}
 }
 \value{
-Either a scalar corresponding to the estimated admixture rate or, if F2 block-jackknife samples are available in the input fstats object (i.e., compute.fstats was run with return.F2.blockjackknife.samples = TRUE) a vector with three elements corresponding to the estimate of the admixture rate, the block-jacknife mean (may be slightly different than the previous since not exactly the same set of markers are used) and the standard error of the estimates.
+A vector with 5 elements corresponding. The first element is always the estimated value. If F2 block-jackknife samples are available in the input fstats object (i.e., compute.fstats was run with return.F2.blockjackknife.samples = TRUE), the four other elements are the block-jackknife mean; the block-jackknife s.e.; and the lower and upper bound of the 95% (block-jackknife) Confidence Interval estimates. Otherwise these four elements are set to NA.
 }
 \description{
 Compute F4ratio (estimation of admixture rate) from an fstats object

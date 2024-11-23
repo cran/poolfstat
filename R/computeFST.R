@@ -1,218 +1,296 @@
-#' Compute FST from Pool-Seq data or Count data
+#' Compute Fst from Pool-Seq data or Count data
 #' @param x A pooldata object containing Pool-Seq information or countdata object containing allele counts information
-#' @param method Either "Anova" (default method as described in Hivert et al (2018, eq. 9) for pool-seq data and Weir (1996, eq. 5.2) for count data) or "Identity" (relying on unbiased estimators of Probability of Identity within and across pairs of pools/populations)
+#' @param method Either "Anova" (default method) or "Identity" (relying on unbiased estimators of Probability of Identity within and across pairs of pools/populations)
+#' @param struct Vector of length equal to the number of pop. sample that give the pop. sample group name of index (i.e., structure) 
+#' @param weightpid When method="Identity", if TRUE weighting averages of pop. Q1 and pairwise Q2 are performed (see eq. A46 and A47 in Hivert et al., 2018 for PoolSeq and Rousset 2007 for count data) to compute overall Q1 and Q2. If not, unweighted averages are performed. 
 #' @param nsnp.per.bjack.block Number of consecutive SNPs within a block for block-jackknife (default=0, i.e., no block-jackknife sampling) 
 #' @param sliding.window.size Number of consecutive SNPs within a window for multi-locus computation of Fst over sliding window with half-window size step (default=0, i.e., no sliding-window scan) 
 #' @param verbose If TRUE extra information is printed on the terminal
 #' @return A list with the four following elements:
 #' \enumerate{
-#' \item "FST": a scalar corresponding to the estimate of the genome-wide FST over all the populations
-#' \item "snp.FST": a vector containing estimates of SNP-specific FST
-#' \item "snp.Q1": a vector containing estimates of the overall within pop. SNP-specific probability of identity
-#' \item "snp.Q2": a vector containing estimates of the overall between pop. SNP-specific probability of identity
-#' \item "mean.fst" (if nsnp.per.bjack.block>0): genome-wide Fst estimate as the mean over block-jackknife samples (may slight differ from "FST" estimate since it is only computed on SNPs eligible for Block-Jackknife)
-#' \item "se.fst" (if nsnp.per.bjack.block>0): standard-error of the genome-wide Fst estimate computed block-jackknife samples
-#' \item "fst.bjack.samples" (if nsnp.per.bjack.block>0): a vector containing estimates of the overall between pop. SNP-specific probability of identity
-#' \item "sliding.windows.fst" (if sliding.window.size>0): a 4-columns data frame containing information on multi-locus Fst computed for sliding windows of SNPs over the whole genome with i) column with the chromosome/contig of origin of each window; ii) the mid-position of each window; iii) the cumulated mid-position of each window (to facilitate further plotting); and iv) the estimated multi-locus Fst
+#' \item "FST": estimate of genome-wide Fst over all the populations. The element is a vector with 5 elements corresponding to i) the estimated value over all SNPs; ii) the block-jackknife mean; iii)  the block-jackknife s.e.; iv) the lower; and v) the upper bound of the 95% (block-jackknife) Confidence Interval estimates. If nsnp.per.bjack.block=0, only the estimated value is given (other elements are set to NA).
+#' \item "FSG": under the hierarchical Fst model (i.e., when struct vector is non-null); estimates estimate of genome-wide within-group differentiation (Fsg). The element is a vector with 5 elements corresponding to i) the estimated value over all SNPs; ii) the block-jackknife mean; iii)  the block-jackknife s.e.; iv) the lower; and v) the upper bound of the 95% (block-jackknife) Confidence Interval estimates. If nsnp.per.bjack.block=0, only the estimated value is given (other elements are set to NA).
+#' \item "FGT": under the hierarchical Fst model (i.e., when struct vector is non-null); estimates estimate of genome-wide between-group differentiation (Fgt). The element is a vector with 5 elements corresponding to i) the estimated value over all SNPs; ii) the block-jackknife mean; iii)  the block-jackknife s.e.; iv) the lower; and v) the upper bound of the 95% (block-jackknife) Confidence Interval estimates. If nsnp.per.bjack.block=0, only the estimated value is given (other elements are set to NA).
+#' \item "snp.Fstats": a data frame containing SNP-specific estimates of Fst and also under the hierarchical (i.e., when struct vector is non-null) SNP-specific estimates Fsg and Fgt
+#' \item "snp.Q": a data frame containing SNP-specific estimates of Q1 (within-population) and Q2 (between-population) probability of identity and also under the hierarchical (i.e., when struct vector is non-null) SNP-specific estimates of Q3, the probability of identity between populations from different groups (under this model Q2 is then the Pid between populations from the same group).
+#' \item "sliding.windows.fvalues" (if sliding.window.size>0): a 4 or 6 (under hierarchical Fst model) column data frame containing information on multi-locus Fst (and Fsg and Fgt under the hierarchical Fst model) computed for sliding windows of SNPs over the whole genome with i) column with the chromosome/contig of origin of each window; ii) the mid-position of each window; iii) the cumulated mid-position of each window (to facilitate further plotting); iv) the estimated multi-locus Fst; and under the hierarchical Fst model v) the estimated multi-locus Fsg and ; vi) the estimated multi-locus Fgt
 #' }
 #' @seealso To generate pooldata object, see \code{\link{vcf2pooldata}}, \code{\link{popsync2pooldata}},\code{\link{genobaypass2pooldata}} or \code{\link{genoselestim2pooldata}}. To generate coundata object, see \code{\link{genobaypass2countdata}} or \code{\link{genotreemix2countdata}}.
 #' @examples
 #'  make.example.files(writing.dir=tempdir())
 #'  pooldata=popsync2pooldata(sync.file=paste0(tempdir(),"/ex.sync.gz"),poolsizes=rep(50,15))
 #'  res.fst=computeFST(pooldata)
+#'  res.hierfst=computeFST(pooldata,struct=c(rep("A",5),rep("B",7),rep("C",3)))
 #' @export
-computeFST<-function(x,method="Anova",nsnp.per.bjack.block=0,sliding.window.size=0,verbose=TRUE){
-  if(!(method %in% c("Identity","Anova"))){stop("method should either be Identity or Anova (default)")}
+computeFST <- function(x,method = "Anova",struct = NULL,weightpid=FALSE,nsnp.per.bjack.block=0,sliding.window.size=0,verbose=TRUE) {
+  #check input objects (and retrieve nbr of pop samples)
+  if (!(method %in% c("Identity","Anova"))) {stop("method should either be Identity or Anova (default)")}
   if(!(is.pooldata(x)) & !(is.countdata(x))){
     stop("Input data are not formatted as valid pooldata (see the popsync2pooldata, vcf2pooldata, genobaypass2pooldata and selestim2pooldata functions) or countdata (see the genobaypass2countdata and genotreemix2countdata) object\n")} 
-  if(method=="Identity"){
-    #computing Q1 for each snp/pop
-    if(is.countdata(x)){
-      snp.Q1=rowMeans((x@refallele.count*(x@refallele.count-1) + (x@total.count-x@refallele.count)*(x@total.count-x@refallele.count-1) )/(x@total.count*(x@total.count-1)),na.rm=T) 
-      hat.Q1=mean(snp.Q1,na.rm=T) 
-      #computing Q2 for each snp/pop pair
-      Q2.countdiff=matrix(0,x@nsnp,x@npops*(x@npops-1)/2)
-      Q2.counttot=matrix(0,x@nsnp,x@npops*(x@npops-1)/2)
-      cnt=0
-      for(i in 1:(x@npops-1)){
-        for(j in (i+1):x@npops){
-          cnt=cnt+1
-          Q2.countdiff[,cnt]=( x@refallele.count[,i]*x@refallele.count[,j] + (x@total.count[,i]-x@refallele.count[,i])*(x@total.count[,j]-x@refallele.count[,j]))
-          Q2.counttot[,cnt]=(x@total.count[,i]*x@total.count[,j])
-        }
-      }
-      snp.Q2=rowSums(Q2.countdiff)/rowSums(Q2.counttot)
-      rm(Q2.counttot,Q2.countdiff) ; gc()      
-      hat.Q2=mean(snp.Q2,na.rm=TRUE)
-    }else{#see eq. A39 (Hivert et al., 2018)
-      Q1=(x@refallele.readcount*(x@refallele.readcount-1) + (x@readcoverage-x@refallele.readcount)*(x@readcoverage-x@refallele.readcount-1) )/(x@readcoverage*(x@readcoverage-1))
-      Q1 = (1/(matrix(1,x@nsnp,x@npools) %*% diag(x@poolsizes-1)))*(Q1 %*% diag(x@poolsizes) - 1) 
-      lambdaj=x@poolsizes*(x@poolsizes-1)
-      lambdaj=lambdaj/sum(lambdaj)
-      snp.Q1=rowSums(Q1%*%diag(lambdaj))
-      hat.Q1=mean(snp.Q1,na.rm=T) 
-      rm(Q1) ; gc()
-      #computing Q2 for each snp/pop pair
-      Q2=matrix(0,x@nsnp,x@npools*(x@npools-1)/2)
-      omegajj=rep(0,x@npools*(x@npools-1)/2)   
-      cnt=0
-      for(i in 1:(x@npools-1)){
-        for(j in (i+1):x@npools){
-          cnt=cnt+1
-          omegajj[cnt]=x@poolsizes[i]*x@poolsizes[j]
-          Q2[,cnt]=( x@refallele.readcount[,i]*x@refallele.readcount[,j] +
-                       (x@readcoverage[,i]-x@refallele.readcount[,i])*(x@readcoverage[,j]-x@refallele.readcount[,j]))/(x@readcoverage[,i]*x@readcoverage[,j])
-        }
-      }
-      snp.Q2=rowSums(Q2%*%diag(omegajj/sum(omegajj)))
-      hat.Q2=mean(snp.Q2,na.rm=TRUE)
-      rm(Q2) ; gc()
-    }
-    rslt=list(FST=(hat.Q1-hat.Q2)/(1-hat.Q2),snp.Q1=snp.Q1,snp.Q2=snp.Q2,snp.FST=(snp.Q1-snp.Q2)/(1-snp.Q2) )
-    rm(snp.Q1,snp.Q2) ; gc()
+  if(is.countdata(x)){nbr.pops <- x@npops}else{nbr.pops <- x@npools}
+  if(is.null(struct)){
+    compute.hierfstat=FALSE    
+  }else{
+    #check structure vector  
+    if(length(struct)!=nbr.pops){
+      stop("Misspecified structure vector (struct argument): must the same length as the number of pop. samples in the countdata or pooldata object.\n")}
+    nbr.grps <- length(sort(unique(struct)))
+    if(nbr.grps<2){stop("A single group was found for all sampled pop in the structure vector. At least 2 groups must be declared to compute hierarchical Fst!\n")}
+    grp.code=1:nbr.grps ; names(grp.code)=unique(struct)
+    struct.code=as.numeric(grp.code[struct])
+    compute.hierfstat=TRUE 
   }
   
-  if (method=="Anova"){
-    if(is.countdata(x)){#eq 5.2 in Weir 1996
-      SumNi=rowSums(x@total.count)
-      Nic=x@total.count-(x@total.count**2)/SumNi
-      Nc=rowSums(Nic)/(x@npops-1)
-      MSG=(rowSums(x@refallele.count*(x@total.count-x@refallele.count)/x@total.count)) /(SumNi-x@npops)
-      PA=rowSums(x@refallele.count)/SumNi
-      MSP=(rowSums(x@total.count*((x@refallele.count/x@total.count-PA)**2)))/(x@npops-1)
-      F_ST=(MSP-MSG)/(MSP+(Nc-1)*MSG)
-      F_ST_multi=mean(MSP-MSG,na.rm=T)/mean(MSP+(Nc-1)*MSG,na.rm=T)
-      rslt <- list(snp.FST = F_ST,snp.Q1 = 1 - MSG*2,snp.Q2 = 1 - MSG*2 - 2*(MSP - MSG) / Nc,FST = F_ST_multi)
-      #le facteur 2 dans le calcul de snp.Q1 et snp.Q2 vient du mode de calcul simplifie des MSP et MSG (en bi-allelique) avec les formules a la Weir
-      #On peut retomber strictement sur les formules de Rousset 2007 (etendues dans Hivert et al. par Renaud pour le cas PoolSeq) qui matchent parfaitement l'approche poolseq ci-desous en faisant
-      # S1 <- rowSums(x@total.count) ; S2 <- rowSums(x@total.count**2)
-      # n_c=(S1-S2/S1)/(x@npops-1)
-      # YY_alt=x@total.count - x@refallele.count
-      # SSI = rowSums(x@refallele.count -  x@refallele.count^2 / x@total.count +  YY_alt - YY_alt^2 / x@total.count,na.rm = TRUE)
-      # Ici on calcule les identites intra avec la formule:
-      #  Q1=y - y^2/n + (n-y) - (n-y)^2/n
-      #    =n - ((y+(n-y))^2 - 2y(n-y))/n
-      #    =n - (n^2 - 2y(n-y))/n
-      #    =2y(n-y)/n [utilise dans le calcul du MSG ci-dessus]
-      # SSP=rowSums(x@total.count * ((x@refallele.count / x@total.count) - (rowSums(x@refallele.count) / S1))^2 + x@total.count * ((YY_alt / x@total.count) - (rowSums(YY_alt) / S1))^2,na.rm = TRUE)
-      # MSI=SSI/(S1-x@npops) ; MSP=SSP/(x@npops-1)
-      # F_ST=(MSP-MSI)/(MSP+(n_c-1)*MSI)  #cf eq. 28A28 de Rousset (2007) en factorisant numerateur et denominateur par (S1-ns)*(ns-1) pour retrouver MSI et MSP
-      # F_ST_multi=mean(MSP-MSI,na.rm=T)/mean(MSP+(n_c-1)*MSI,na.rm=T)
-      # snp.Q1 = 1 - MSI  #cf eq 28A21 de Rousset 2007 en sommant sur tous les allele (i.e., SumPi_k=1)
-      # snp.Q2 = 1 - MSI - (MSP - MSI) / n_c
-      snpNc=Nc #useful for blockjackknife ou sliding wnidows
-      rm(F_ST,MSP,MSG) ; gc()
-    }else{#Hivert et al. 2018
-      mtrx.n_i <- matrix(x@poolsizes,nrow = x@nsnp,ncol = x@npools,byrow = TRUE)
-      C_1 <- rowSums(x@readcoverage)
-      C_2 <- rowSums(x@readcoverage^2)
-      D_2 <- rowSums(x@readcoverage / mtrx.n_i + (mtrx.n_i - 1) / mtrx.n_i,na.rm = TRUE)
-      D_2.star <- rowSums(x@readcoverage * (x@readcoverage / mtrx.n_i + (mtrx.n_i - 1) / mtrx.n_i),na.rm = TRUE) / C_1
-      n_c <- (C_1 - C_2 / C_1) / (D_2 - D_2.star)
-      rm(C_2,mtrx.n_i) ; gc()
-      #    YY_alt <- x@readcoverage - x@refallele.readcount
-      #    SSI <- rowSums(x@refallele.readcount - x@refallele.readcount^2 / x@readcoverage + YY_alt - YY_alt^2 / x@readcoverage,na.rm = TRUE)
-      SSI <- 2*rowSums(x@refallele.readcount*(x@readcoverage-x@refallele.readcount)/x@readcoverage,na.rm=TRUE)
-      SA<-rowSums(x@refallele.readcount)/C_1
-      SSP<-2*rowSums(x@readcoverage*((x@refallele.readcount/x@readcoverage-SA)**2),na.rm=TRUE)
-      #    SSP <- rowSums(x@readcoverage * ((x@refallele.readcount / x@readcoverage) - (rowSums(x@refallele.readcount) / C_1))^2 + x@readcoverage * ((YY_alt / x@readcoverage) - (rowSums(YY_alt) / C_1))^2,na.rm = TRUE)
-      #    rm(YY_alt,mtrx.n_i) ; gc()
-      MSI <- SSI / (C_1 - D_2)
-      MSP <- SSP / (D_2 - D_2.star)
-      rm(C_1,D_2,D_2.star) ; gc()
-      F_ST <- (MSP - MSI)  / (MSP + (n_c - 1) * MSI)
-      F_ST_multi <- sum(MSP - MSI,na.rm=T)  / sum(MSP + (n_c- 1) * MSI,na.rm=T)
-      rslt <- list(snp.FST = F_ST,snp.Q1 = 1 - MSI,snp.Q2 = 1 - MSI - (MSP - MSI) / n_c,FST = F_ST_multi)
-      snpNc=n_c #useful for blockjackknife ou sliding wnidow
-      rm(F_ST,MSI,MSP,n_c) ; gc()
+  if(method=="Anova" & weightpid){cat("NOTE: weightpid is not relevant when method is Anova\n")}
+  
+  if(compute.hierfstat){
+    if(verbose){cat("Computation of hierarchical Fst (Gautier et al., 2024)\n")}
+    if(verbose){
+      cat(nbr.grps,"groups of pop samples declared in struct object:\n")
+      print(grp.code)
     }
-    snpNc[is.na(rslt$snp.Q1)|is.na(rslt$snp.Q2)]=NA #important pour comptages des SNPs contribuant a Fst dans calcul multilocus (blockjackknife ou sliding window)
+  }else{
+    if(verbose){cat("Computation of Fst (Hivert et al., 2018)\n")}    
+  }
+  ########
+  ##prepare output object
+  rslt=list()
+  tmp.vect=rep(NA,5) ; names(tmp.vect)=c("Estimate","bjack mean","bjack s.e.","CI95inf","CI95sup")
+  rslt$Fst=tmp.vect
+  if(compute.hierfstat){
+    rslt$snp.Q=rslt$snp.Fstats=as.data.frame(matrix(NA,x@nsnp,3))
+    colnames(rslt$snp.Q)=c("Q1","Q2","Q3")
+    colnames(rslt$snp.Fstats)=c("Fsg","Fgt","Fst") 
+    rslt$Fsg=rslt$Fgt=tmp.vect
+  }else{
+    rslt$snp.Q=as.data.frame(matrix(NA,x@nsnp,2))
+    rslt$snp.Fstats=as.data.frame(matrix(NA,x@nsnp,1))
+    colnames(rslt$snp.Q)=c("Q1","Q2")   
+    colnames(rslt$snp.Fstats)=c("Fst")  
+  }
+  ########################
+  if(method=="Identity"){
+    if(verbose){cat("Computing SNP-specific Q1 (Identity estimator)\n")}
+    if(is.countdata(x)){
+      if(weightpid){
+       rslt$snp.Q[,1]=.compute_snpQ1rw(x@refallele.count,x@total.count,rep(1,nbr.pops),rep(1,nbr.pops),FALSE,verbose=verbose)
+      }else{
+       rslt$snp.Q[,1]=.compute_snpQ1(x@refallele.count,x@total.count,rep(1,nbr.pops),verbose=verbose) 
+      }
+    }else{
+      if(weightpid){
+        rslt$snp.Q[,1]=.compute_snpQ1rw(x@refallele.readcount,x@readcoverage,x@poolsizes/(x@poolsizes-1),x@poolsizes,TRUE,verbose=verbose)
+      }else{
+        rslt$snp.Q[,1]=.compute_snpQ1(x@refallele.readcount,x@readcoverage,x@poolsizes/(x@poolsizes-1),verbose=verbose) 
+      }
     }
+    pairs.idx=t(combn(nbr.pops,2))
+    if(compute.hierfstat){
+      pairs.within=which(struct.code[pairs.idx[,1]]==struct.code[pairs.idx[,2]])
+      #computing pairwise within group 
+      if(verbose){cat("Computing SNP-specific within-group Q2 (Identity estimator)\n")}
+      if(is.countdata(x)){
+        if(weightpid){
+          rslt$snp.Q[,2]=.compute_snpQ2rw(x@refallele.count,x@total.count,pairs.idx[pairs.within,]-1,rep(1,nbr.pops),FALSE,verbose=verbose) 
+        }else{
+          rslt$snp.Q[,2]=.compute_snpQ2(x@refallele.count,x@total.count,pairs.idx[pairs.within,]-1,verbose=verbose)
+        }
+      }else{
+        if(weightpid){
+          rslt$snp.Q[,2]=.compute_snpQ2rw(x@refallele.readcount,x@readcoverage,pairs.idx[pairs.within,]-1,x@poolsizes,TRUE,verbose=verbose) 
+        }else{
+         rslt$snp.Q[,2]=.compute_snpQ2(x@refallele.readcount,x@readcoverage,pairs.idx[pairs.within,]-1,verbose=verbose)
+        }
+      }
+      #computing pairwise across group
+      if(verbose){cat("Computing SNP-specific Q3 i.e. between-group Q2 (Identity estimator)\n")}
+      if(is.countdata(x)){
+        if(weightpid){
+          rslt$snp.Q[,3]=.compute_snpQ2rw(x@refallele.count,x@total.count,pairs.idx[-pairs.within,]-1,rep(1,nbr.pops),FALSE,verbose=verbose) 
+        }else{
+          rslt$snp.Q[,3]=.compute_snpQ2(x@refallele.count,x@total.count,pairs.idx[-pairs.within,]-1,verbose=verbose)
+        }        
+       }else{
+         if(weightpid){
+           rslt$snp.Q[,3]=.compute_snpQ2rw(x@refallele.readcount,x@readcoverage,pairs.idx[-pairs.within,]-1,x@poolsizes,TRUE,verbose=verbose) 
+         }else{
+           rslt$snp.Q[,3]=.compute_snpQ2(x@refallele.readcount,x@readcoverage,pairs.idx[-pairs.within,]-1,verbose=verbose)
+         }
+       }
+      num.fsg=(rslt$snp.Q$Q1 - rslt$snp.Q$Q2)
+      den.fsg=1. - rslt$snp.Q$Q2
+      num.fgt=rslt$snp.Q$Q2 - rslt$snp.Q$Q3
+      num.fst=rslt$snp.Q$Q1 - rslt$snp.Q$Q3
+      den.fst=1. - rslt$snp.Q$Q3 #same as den.fgt	    
+    }else{
+      #computing pairwise within group 
+      if(verbose){cat("Computing SNP-specific within-group Q2 (Identity estimator)\n")}
+      if(is.countdata(x)){
+        if(weightpid){
+          rslt$snp.Q[,2]=.compute_snpQ2rw(x@refallele.count,x@total.count,pairs.idx-1,rep(1,nbr.pops),FALSE,verbose=verbose) 
+        }else{
+          rslt$snp.Q[,2]=.compute_snpQ2(x@refallele.count,x@total.count,pairs.idx-1,verbose=verbose)
+        }
+      }else{
+        if(weightpid){
+          rslt$snp.Q[,2]=.compute_snpQ2rw(x@refallele.readcount,x@readcoverage,pairs.idx-1,x@poolsizes,TRUE,verbose=verbose) 
+        }else{
+          rslt$snp.Q[,2]=.compute_snpQ2(x@refallele.readcount,x@readcoverage,pairs.idx-1,verbose=verbose)
+        }        
+      }
+      num.fst=rslt$snp.Q$Q1 - rslt$snp.Q$Q2
+      den.fst=1. - rslt$snp.Q$Q2 #same as den.fgt
+    }
+  }
+  ########################
+  if(method=="Anova"){
+    if(compute.hierfstat){
+      if(verbose){cat("Computing SNP-specific Q1, Q2 and Q3 (Anova estimator)\n")}
+      if(is.countdata(x)){
+        tmp.aov=.compute_snpHierFstAov(x@refallele.count,x@total.count,rep(-1,nbr.pops),struct.code-1,verbose=verbose)
+      }else{
+        tmp.aov=.compute_snpHierFstAov(x@refallele.readcount,x@readcoverage,x@poolsizes,struct.code-1,verbose=verbose)
+      }
+      #tmp.aov: MSI, MSP, MSG, nc, nc_p, nc_pp
+      rslt$snp.Q[,1]=1.-tmp.aov[,1]                                         #1-MSI
+      rslt$snp.Q[,2]=rslt$snp.Q[,1] - (tmp.aov[,2]-tmp.aov[,1])/tmp.aov[,4] #1-MSI-(MSP - MSI) / n_c
+      rslt$snp.Q[,3]=rslt$snp.Q[,2] - 
+        ((tmp.aov[,3]-tmp.aov[,1])+(tmp.aov[,2]-tmp.aov[,1])*tmp.aov[,6]/tmp.aov[,4])/tmp.aov[,5]           
+      #Q3=1.0 - MSI - (MSP - MSI) / nc - (MSG - MSI + (MSP - MSI) * nc_pp / nc) / nc_p
+      #important de ne pas passer par les Q1, Q2 et Q3 pour garder le facteur nc le calcul multilocus
+      num.fsg=(tmp.aov[,2]-tmp.aov[,1])      #=(MSP - MSI)
+      den.fsg=(tmp.aov[,2]+(tmp.aov[,4]-1.)*tmp.aov[,1])   #=(MSP + (nc - 1.0) * MSI)
+      num.fgt=tmp.aov[,4]*(tmp.aov[,3]-tmp.aov[,1]) + tmp.aov[,6]*(tmp.aov[,2]-tmp.aov[,1])
+      #num.fgt=(nc * (MSG - MSI) + nc_pp * (MSP - MSI))
+      num.fst=tmp.aov[,4]*(tmp.aov[,3]-tmp.aov[,1]) + (tmp.aov[,5]+tmp.aov[,6])*(tmp.aov[,2]-tmp.aov[,1])
+      #	num.fst=(nc * (MSG - MSI) + (nc_p + nc_pp) * (MSP - MSI))
+      den.fst=num.fst + tmp.aov[,4]*tmp.aov[,5]*tmp.aov[,1]
+      #den.fgt=den.fst=(nc * (MSG - MSI) + (nc_p + nc_pp) * (MSP - MSI) + nc * nc_p * MSI)
+    }else{
+      if(verbose){cat("Computing SNP-specific Q1 and Q2 (Anova estimator)\n")}
+      if(is.countdata(x)){
+        tmp.aov=.compute_snpFstAov(x@refallele.count,x@total.count,rep(-1,nbr.pops),verbose=verbose)
+      }else{
+        tmp.aov=.compute_snpFstAov(x@refallele.readcount,x@readcoverage,x@poolsizes,verbose=verbose)
+      }
+      rslt$snp.Q[,1]=1.-tmp.aov[,1]                                         #1-MSG
+      rslt$snp.Q[,2]=rslt$snp.Q[,1] - (tmp.aov[,2]-tmp.aov[,1])/tmp.aov[,3] #1 - MSG - (MSP - MSG) / n_c       
+      num.fst=tmp.aov[,2]-tmp.aov[,1]                          #MSP-MSG :
+      den.fst=tmp.aov[,2]+(tmp.aov[,3]-1)*tmp.aov[,1]          #MSP + (n_c- 1) * MSG 
+      #important de ne pas passer par les Q1 et Q2 pour garder le facteur nc le calcul multilocus
+    }
+    rm(tmp.aov) ; gc()
+  }
+  ########################
+  #multi-locus estimates
+  keep=rowSums(is.na(rslt$snp.Q))==0
+  if(compute.hierfstat){
+    rslt$snp.Fstats$Fsg=num.fsg / den.fsg  
+    rslt$snp.Fstats$Fgt=num.fgt / den.fst
+    rslt$snp.Fstats$Fst=num.fst / den.fst
+    rslt$Fsg[1]=sum(num.fsg[keep])/sum(den.fsg[keep]) 
+    rslt$Fgt[1]=sum(num.fgt[keep])/sum(den.fst[keep]) 
+    rslt$Fst[1]=sum(num.fst[keep])/sum(den.fst[keep]) 
+  }else{
+    rslt$snp.Fstats$Fst=num.fst / den.fst
+    rslt$Fst[1]=sum(num.fst[keep])/sum(den.fst[keep])   
+  }
+  
   #######
-  ##Remarque calcul Fst multilocus (blockjacknife+sliding window) dans le cas Anova à partir des snp.Q1 et snp.Q2
-  ##On utilise: Q1-Q2=(MSP-MSI)/nc et (1-Q2)=(MSP+(nc-1)*MSI)/nc
-  ##      =>    Fst_multi=sum(nc_i*(Q1_i-Q2_i))/sum(nc_i-nc_i*Q2_i) = sum(MSP_i-MSI_i)/sum(MSP_i+(nc_i-1)*MSP_i) 
-  ##Cett procudure tient automatiquement compte des marqueurs NA sur Q2 ou Q1 (sous reserve que snpNC soit a NA)
-  ##Dans le cas Identity: il faut aussi compter les NA (sum(Q1-Q2)/(sum(1-Q2)) avec sum(1-Q2)=NmrkNonNA - sum(Q2,na.rm=T)      
+  #block jackknife      
   #######
   if(nsnp.per.bjack.block>0){
     if(verbose){cat("Starting Block-Jackknife sampling\n")}
     bjack.blocks=generate.jackknife.blocks(x,nsnp.per.bjack.block,verbose=verbose)
-    tmp.idx.sel=!is.na(bjack.blocks$snp.block.id)
-    tmp.snp.block.id=bjack.blocks$snp.block.id[!is.na(bjack.blocks$snp.block.id)]
-    if(method=="Anova"){
-      tmp.sampled.q1=as.vector(by(rslt$snp.Q1[tmp.idx.sel]*snpNc[tmp.idx.sel],tmp.snp.block.id,sum,na.rm=T))     
-      tmp.sampled.q1=(sum(tmp.sampled.q1)-tmp.sampled.q1)
-      tmp.sampled.q2=as.vector(by(rslt$snp.Q2[tmp.idx.sel]*snpNc[tmp.idx.sel],tmp.snp.block.id,sum,na.rm=T))
-      tmp.sampled.q2=(sum(tmp.sampled.q2)-tmp.sampled.q2)      
-      tmp.sampled.sumnc=as.vector(by(snpNc[tmp.idx.sel],tmp.snp.block.id,sum,na.rm=T))
-      tmp.sampled.sumnc=sum(tmp.sampled.sumnc)-tmp.sampled.sumnc   
-      sampled.fst=(tmp.sampled.q1-tmp.sampled.q2) / (tmp.sampled.sumnc-tmp.sampled.q2)  
-    }else{
-      tmp.sampled.q1=as.vector(by(rslt$snp.Q1[tmp.idx.sel],tmp.snp.block.id,sum,na.rm=T))
-      tmp.sampled.q1=(sum(tmp.sampled.q1)-tmp.sampled.q1)
-      tmp.sampled.q2=as.vector(by(rslt$snp.Q2[tmp.idx.sel],tmp.snp.block.id,sum,na.rm=T))
-      tmp.sampled.q2=(sum(tmp.sampled.q2)-tmp.sampled.q2)
-      tmp.snp.cnt=as.vector(by(1-(is.na(rslt$snp.Q1[tmp.idx.sel])|is.na(rslt$snp.Q2[tmp.idx.sel])),tmp.snp.block.id,sum,na.rm=T))
-      tmp.snp.cnt=sum(tmp.snp.cnt)-tmp.snp.cnt   
-      sampled.fst=(tmp.sampled.q1-tmp.sampled.q2) / (tmp.snp.cnt-tmp.sampled.q2)  
-    }    
-    rslt[["mean.fst"]]=mean(sampled.fst)
-    rslt[["se.fst"]]=sd(sampled.fst)*(bjack.blocks$nblocks-1)/sqrt(bjack.blocks$nblocks) #By definition: se(hat(f))={Sum((fi-mean_f)^2)*(n-1)/n}^0.5={var_f*(n-1)*(n-1)/n}^0.5=sd_f*(n-1)/(n^0.5)
-    rslt[["fst.bjack.samples"]]=sampled.fst
+    keep=keep & !is.na(bjack.blocks$snp.block.id)
+    tmp.snp.block.id=bjack.blocks$snp.block.id[keep]-1 #0 indexed for cpp
+    
+    num.fst.blk.contrib=.block_sum(num.fst[keep],tmp.snp.block.id)
+    den.fst.blk.contrib=.block_sum(den.fst[keep],tmp.snp.block.id)
+    den.fst.blk.contrib=den.fst.blk.contrib-sum(den.fst.blk.contrib) #keep it for fgt (if hierfst)     
+    sampled.fst=(num.fst.blk.contrib-sum(num.fst.blk.contrib))/den.fst.blk.contrib
+    rm(num.fst.blk.contrib) ; gc()    #keep   den.fst.blk.contrib for fgt if hierfstat
+    tmp.fact=(bjack.blocks$nblocks-1)/sqrt(bjack.blocks$nblocks)
+    rslt$Fst[2:3]=c(mean(sampled.fst),sd(sampled.fst)*tmp.fact)  
+    rm(sampled.fst) ; gc()
+    rslt$Fst[4:5]=rslt$Fst[2]+c(-1.96,1.96)*rslt$Fst[3]   
+    if(compute.hierfstat){
+      num.fsg.blk.contrib=.block_sum(num.fsg[keep],tmp.snp.block.id)
+      den.fsg.blk.contrib=.block_sum(den.fsg[keep],tmp.snp.block.id)
+      sampled.fsg=(num.fsg.blk.contrib-sum(num.fsg.blk.contrib))/(den.fsg.blk.contrib-sum(den.fsg.blk.contrib))
+      rm(num.fsg.blk.contrib,den.fsg.blk.contrib) ; gc()
+      rslt$Fsg[2:3]=c(mean(sampled.fsg),sd(sampled.fsg)*tmp.fact)
+      rm(sampled.fsg) ; gc()
+      rslt$Fsg[4:5]=rslt$Fsg[2]+c(-1.96,1.96)*rslt$Fsg[3]   
+      
+      num.fgt.blk.contrib=.block_sum(num.fgt[keep],tmp.snp.block.id)
+      sampled.fgt=(num.fgt.blk.contrib-sum(num.fgt.blk.contrib))/den.fst.blk.contrib
+      rm(num.fgt.blk.contrib) ; gc()
+      rslt$Fgt[2:3]=c(mean(sampled.fgt),sd(sampled.fgt)*tmp.fact)
+      rm(sampled.fgt) ; gc()      
+      rslt$Fgt[4:5]=rslt$Fgt[2]+c(-1.96,1.96)*rslt$Fgt[3]
+    }
+    rm(den.fst.blk.contrib) ; gc()
   }
-  
-  #######################
+  #######
+  #sliding windows     
+  #######
   if(sliding.window.size>1){
+    keep=rowSums(is.na(rslt$snp.Q))==0 #may have been modified by blockjackknife
+    if(sum(keep)<1){stop("Error no SNP eligible\n")}
     if(verbose){cat("Start sliding-window scan\n")}
-    det.idx.per.chr=matrix(unlist(by(1:x@nsnp,x@snp.info[,1],range)),ncol=2,byrow=T)
+    det.idx.per.chr=matrix(unlist(by(1:sum(keep),x@snp.info[keep,1],range)),ncol=2,byrow=T)
     if(nrow(det.idx.per.chr)==0){#in case all contig names are NA
       cat("Exit function: No chr/contigs available (information on SNP contig name might not have been provided)\n")
     }
     det.idx.per.chr=cbind(det.idx.per.chr,det.idx.per.chr[,2]-det.idx.per.chr[,1]+1) 
     step=floor(sliding.window.size/2)
-    all.pos=all.fst=all.chr=all.cumpos=win.size=c()
+    all.pos=all.startpos=all.endpos=all.fsg=all.fgt=all.fst=all.chr=all.cumpos=win.size=c()
     tmp.cum=0
     if(verbose){
       n.chr.eval=sum(det.idx.per.chr[,3]>sliding.window.size)
       cat(n.chr.eval,"chromosomes scanned (with more than",sliding.window.size,"SNPs)\n")
       pb <- progress_bar$new(format = " [:bar] :percent eta: :eta",total = n.chr.eval, clear = FALSE, width= 60)
-    #  pb <- txtProgressBar(min = 0, max = n.chr.eval, style = 3)
       tmp.cnt=0
     }
-    all.snp.pos=x@snp.info[,2]
+    all.snp.pos=x@snp.info[keep,2]
     for(i in 1:nrow(det.idx.per.chr)){
       if(det.idx.per.chr[i,3]>sliding.window.size){
-        tmp.sel=det.idx.per.chr[i,1]:det.idx.per.chr[i,2]
-        tmp.pos=floor(rollmean(all.snp.pos[tmp.sel],k=sliding.window.size))
-        retained.pos=seq(1,length(tmp.pos),step)
-        tmp.pos=tmp.pos[retained.pos]
+        tmp.sel=det.idx.per.chr[i,1]:det.idx.per.chr[i,2] #idx all SNPs for ith chrom.
+        tmp.win.start=seq(1,det.idx.per.chr[i,3]-sliding.window.size,step)
+        tmp.win.end=tmp.win.start+sliding.window.size-1
+        tmp.sel=tmp.sel[1:rev(tmp.win.end)[1]] #remove remaining SNPs after the last window
+        tmp.nwin=length(tmp.win.start)
+        tmp.snp.win.idx=cbind(tmp.win.start,tmp.win.end)-1 #0-indexed (for cpp)
+        tmp.den.fst=.block_sum2(den.fst[tmp.sel],tmp.snp.win.idx) #to keep for fgt if needed
+        all.fst=c(all.fst,.block_sum2(num.fst[tmp.sel],tmp.snp.win.idx)/tmp.den.fst) 
+        if(compute.hierfstat){
+          all.fsg=c(all.fsg,.block_sum2(num.fsg[tmp.sel],tmp.snp.win.idx)/.block_sum2(den.fsg[tmp.sel],tmp.snp.win.idx))  
+          all.fgt=c(all.fgt,.block_sum2(num.fgt[tmp.sel],tmp.snp.win.idx)/tmp.den.fst)
+        }
+        all.startpos=c(all.startpos,all.snp.pos[tmp.sel][tmp.win.start])
+        all.endpos=c(all.endpos,all.snp.pos[tmp.sel][tmp.win.end])
+        tmp.pos=(all.snp.pos[tmp.sel][tmp.win.start]+all.snp.pos[tmp.sel][tmp.win.end])/2
         all.pos=c(all.pos,tmp.pos)
         all.cumpos=c(all.cumpos,tmp.pos+tmp.cum)
         tmp.cum=max(all.cumpos)
-        all.chr=c(all.chr,rep(x@snp.info[tmp.sel[1],1],length(tmp.pos)))
-        #calcul fst
-        if(method=="Anova"){
-          qq1=rollsum(rslt$snp.Q1[tmp.sel]*snpNc[tmp.sel],k=sliding.window.size,na.rm=T)[retained.pos]
-          qq2=rollsum(rslt$snp.Q2[tmp.sel]*snpNc[tmp.sel],k=sliding.window.size,na.rm=T)[retained.pos]  
-          tmp.sumnc=rollsum(snpNc[tmp.sel],k=sliding.window.size,na.rm=T)[retained.pos]
-          tmp.fst=(qq1-qq2) / (tmp.sumnc-qq2)   
-        }else{
-          qq1=rollsum(rslt$snp.Q1[tmp.sel],k=sliding.window.size,na.rm=T)[retained.pos]
-          qq2=rollsum(rslt$snp.Q2[tmp.sel],k=sliding.window.size,na.rm=T)[retained.pos]  
-          tmp.snp.cnt=rollsum(1-(is.na(rslt$snp.Q1[tmp.sel])|is.na(rslt$snp.Q2[tmp.sel])),k=sliding.window.size)[retained.pos]  
-          tmp.fst=(qq1-qq2) / (tmp.snp.cnt-qq2)  
-        }    
-        all.fst=c(all.fst,tmp.fst)
-        win.size=c(win.size,all.snp.pos[tmp.sel[retained.pos]+sliding.window.size-1]-all.snp.pos[tmp.sel[retained.pos]])
+        all.chr=c(all.chr,rep(x@snp.info[keep,1][tmp.sel[1]],tmp.nwin))       
+        tmp.winsize=all.snp.pos[tmp.sel][tmp.win.end]-all.snp.pos[tmp.sel][tmp.win.start]
+        win.size=c(win.size,tmp.winsize)
         if(verbose){pb$tick()} #tmp.cnt=tmp.cnt+1 ; setTxtProgressBar(pb, tmp.cnt)
       }
     }
+    
     if(verbose){
       cat("\nAverage (min-max) Window Sizes",round(mean(win.size*1e-3),1),"(",round(min(win.size*1e-3),1),"-",round(max(win.size*1e-3),1),") kb\n")
       pb$terminate()}#close(pb)}
-    rslt[["sliding.windows.fst"]]=data.frame(Chr=all.chr,Position=all.pos,CumulatedPosition=all.cumpos,MultiLocusFst=all.fst,stringsAsFactors=FALSE)
+    if(compute.hierfstat){
+      rslt$sliding.windows.fvalues=data.frame(Chr=all.chr,Start=all.startpos,End=all.endpos,MidPos=all.pos,CumMidPos=all.cumpos,
+                                              MultiLocusFsg=all.fsg,MultiLocusFgt=all.fgt,MultiLocusFst=all.fst,stringsAsFactors=FALSE)
+    }else{
+      rslt$sliding.windows.fvalues=data.frame(Chr=all.chr,Start=all.startpos,End=all.endpos,MidPos=all.pos,CumMidPos=all.cumpos,
+                                              MultiLocusFst=all.fst,stringsAsFactors=FALSE)        
+    }
   }
-  
-  return(rslt)
+  return(rslt)	
 }

@@ -1,9 +1,9 @@
 #' Compute F4ratio (estimation of admixture rate) from an fstats object
 #' @param x A fstats object containing estimates of fstats
-#' @param num.quadruplet A character vector for the F4 quadruplet used in the F4ratio numerator (should be of the form "A,O;C,X" where A, O, C and X are the names of the population as defined in the countdata or pooldata object used to obtain fstats, see details)
-#' @param den.quadruplet A character vector for the F4 quadruplet used in the F4ratio denominator (should be of the form "A,O;C,B" where A, O, C and B are the names of the populations as defined in the countdata or pooldata object used to obtain fstats, see details))
+#' @param num.quadruplet A character string for the F4 quadruplet used in the F4ratio numerator (should be of the form "A,O;C,X" where A, O, C and X are the names of the population as defined in the countdata or pooldata object used to obtain fstats, see details)
+#' @param den.quadruplet A character string for the F4 quadruplet used in the F4ratio denominator (should be of the form "A,O;C,B" where A, O, C and B are the names of the populations as defined in the countdata or pooldata object used to obtain fstats, see details))
 #' @details Assuming a 4 population phylogeny rooted with an outgroup O of the form (((A,B);C);O) and an admixed population X with two source populations related to B and C, the admixture rate alpha of the B-related ancestry is obtained using the ratio F4(A,O;C,X)/F4(A,O;C,B) (see Patterson et al., 2012 for more details).  
-#' @return Either a scalar corresponding to the estimated admixture rate or, if F2 block-jackknife samples are available in the input fstats object (i.e., compute.fstats was run with return.F2.blockjackknife.samples = TRUE) a vector with three elements corresponding to the estimate of the admixture rate, the block-jacknife mean (may be slightly different than the previous since not exactly the same set of markers are used) and the standard error of the estimates.
+#' @return A vector with 5 elements corresponding. The first element is always the estimated value. If F2 block-jackknife samples are available in the input fstats object (i.e., compute.fstats was run with return.F2.blockjackknife.samples = TRUE), the four other elements are the block-jackknife mean; the block-jackknife s.e.; and the lower and upper bound of the 95% (block-jackknife) Confidence Interval estimates. Otherwise these four elements are set to NA.
 #' @seealso To generate pooldata object, see \code{\link{vcf2pooldata}}, \code{\link{popsync2pooldata}},\code{\link{genobaypass2pooldata}} or \code{\link{genoselestim2pooldata}}. To generate coundata object, see \code{\link{genobaypass2countdata}} or \code{\link{genotreemix2countdata}}.
 #' @examples
 #'  make.example.files(writing.dir=tempdir())
@@ -54,7 +54,8 @@ compute.f4ratio<-function(x,num.quadruplet,den.quadruplet){
   den.f4=x@f2.values$Estimate[den.f2.idx[1]] + x@f2.values$Estimate[den.f2.idx[2]] - 
     x@f2.values$Estimate[den.f2.idx[3]] - x@f2.values$Estimate[den.f2.idx[4]] 
   
-  alpha=num.f4/den.f4
+  alpha=rep(NA,5) ; names(alpha)=c("Estimate","bjack mean","bjack s.e.","CI95inf","CI95sup")
+  alpha[1]=num.f4/den.f4
   
   if(length(x@F2.bjack.samples)>0){
     n.blocks=dim(x@F2.bjack.samples)[3]  
@@ -68,10 +69,9 @@ compute.f4ratio<-function(x,num.quadruplet,den.quadruplet){
     den.f2.bjack=(rowSums(den.f2.bjack) - den.f2.bjack)/(n.blocks - 1) 
     bj.f4rat=(colSums(num.f2.bjack[1:2,])-colSums(num.f2.bjack[3:4,]))/
       (colSums(den.f2.bjack[1:2,])-colSums(den.f2.bjack[3:4,]))
-    alpha.mean=mean(bj.f4rat)
-    alpha.se=sd(bj.f4rat)*(n.blocks-1)/sqrt(n.blocks)
-    alpha=c(alpha,alpha.mean,alpha.se)
-    names(alpha)=c("Estimate","bjack mean","bjack s.e.")
+    alpha[2]=mean(bj.f4rat)
+    alpha[3]=sd(bj.f4rat)*(n.blocks-1)/sqrt(n.blocks)
+    alpha[4:5]=alpha[2]+c(-1.96,1.96)*alpha[3]
   }
   
   return(alpha)

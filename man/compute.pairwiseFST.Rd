@@ -27,7 +27,7 @@ compute.pairwiseFST(
 
 \item{min.indgeno.per.pop}{For allele count data (i.e., countdata objects) only: minimal number of overall counts required in each population. If at least one pop is not genotyped for at least min.indgeno.per.pop (haploid) individual, the position is discarded}
 
-\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)  in the pairwise comparisons.}
+\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio over all read counts for the reference allele over the read coverage)  in the pairwise comparisons.}
 
 \item{output.snp.values}{If TRUE, provide SNP-specific pairwise FST for each comparisons (may lead to a huge result object if the number of pools and/or SNPs is large)}
 

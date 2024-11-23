@@ -15,7 +15,8 @@
 #' @slot optim.results list containing results of the optim call
 #' @details The dot.graph element allows to plot the graph using grViz() from the DiagrammeR package or with the dot program after writing the files (e.g., dot -Tpng inputgraph.dot in terminal). Note that the dot file may be customized (e.g., to change leave color, parameter names...). 
 #' @seealso To generate fitted.graph object, see \code{\link{fit.graph}}.
-fitted.graph<-setClass(Class = "fitted.graph",
+#' @aliases fitted.graph
+gen.fitted.graph<-setClass(Class = "fitted.graph",
                    representation(graph="matrix",dot.graph="character",score="numeric",bic="numeric",fitted.outstats="matrix",edges.length="numeric",edges.length.scaled="numeric",edges.length.ci="matrix",admix.prop="numeric",admix.prop.ci="matrix",nodes.het="numeric",fitted.f2.mat="matrix",optim.results="list")
 )
 

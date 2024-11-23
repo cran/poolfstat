@@ -27,7 +27,7 @@ The three files described in the details section
 Generate files for the qpGraph software from a graph.params object
 }
 \details{
-This function generates the three files required by qpGraph: i) a file named {outfileprefix}.graph containing the graph in appropriate format; ii) a file named {outfileprefix}.fstats file containing the fstats estimates of fstats (and their covariance); iii) a file named {outfileprefix}.parqpGraph containing essential parameter information to run qpGraph (this may be edited by hand if other options are needed). The qpGraph software may then be run using the following options -p {outfileprefix}.parqpGraph -g {outfileprefix}.graph -o out.ggg -d out.dot.
+This function generates the three files required by qpGraph: i) a file named [outfileprefix].graph containing the graph in appropriate format; ii) a file named [outfileprefix].fstats file containing the fstats estimates of fstats (and their covariance); iii) a file named [outfileprefix].parqpGraph containing essential parameter information to run qpGraph (this may be edited by hand if other options are needed). The qpGraph software may then be run using the following options -p [outfileprefix].parqpGraph -g [outfileprefix].graph -o out.ggg -d out.dot.
 }
 \seealso{
 To generate graph.params object, see \code{\link{generate.graph.params}}

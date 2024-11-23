@@ -3,6 +3,7 @@
 \docType{class}
 \name{fitted.graph-class}
 \alias{fitted.graph-class}
+\alias{gen.fitted.graph}
 \alias{fitted.graph}
 \title{S4 class to represent a population tree or admixture graph and its underlying fitted parameter.}
 \description{

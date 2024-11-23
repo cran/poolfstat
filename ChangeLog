@@ -1,3 +1,18 @@
+Changes from Version 2.2.0 to 3.0.0 [November 22 2024]
+
+* Major modifications:
+** implementation of estimation of the hierarchical Fst in the computeFST function
+** reimplementation of the computeFST and compute.pairwiseFST to improve memory usage and increase speed (> 1 order of magnitude).
+
+* Adding three new functions:
+** sliding.windows.fstat to compute various f-statistics or ratio of f-statistics for user-defined sample configuration over sliding windows (defined either by number of SNPs or by size in bp)
+** sim.readcounts to simulate Pool-Seq data from allele count data
+** countdata2genobaypass (similar to pooldata2genobaypass but for allele count countdata objects
+
+* Other modifications
+** output format of computeF4ratio (with 95% CI)
+** update and editing of the vignette
+
 Changes from Version 2.1.2 to 2.2.0 [September 06 2023]
 
 * Major modifications:

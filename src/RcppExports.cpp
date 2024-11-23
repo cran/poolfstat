@@ -75,58 +75,116 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_Ddenom
-Rcpp::NumericVector compute_Ddenom(Rcpp::NumericMatrix snpQ2, Rcpp::IntegerMatrix f2idx, Rcpp::LogicalVector verbose);
-RcppExport SEXP _poolfstat_compute_Ddenom(SEXP snpQ2SEXP, SEXP f2idxSEXP, SEXP verboseSEXP) {
+// compute_snpQ1
+Rcpp::NumericVector compute_snpQ1(Rcpp::NumericMatrix refcount, Rcpp::NumericMatrix totcount, Rcpp::NumericVector weight, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_snpQ1(SEXP refcountSEXP, SEXP totcountSEXP, SEXP weightSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ2(snpQ2SEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type f2idx(f2idxSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type weight(weightSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_Ddenom(snpQ2, f2idx, verbose));
+    rcpp_result_gen = Rcpp::wrap(compute_snpQ1(refcount, totcount, weight, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_Q_bjmeans
-Rcpp::NumericVector compute_Q_bjmeans(Rcpp::NumericMatrix snpQ, Rcpp::IntegerVector snp_bj_id, Rcpp::LogicalVector verbose);
-RcppExport SEXP _poolfstat_compute_Q_bjmeans(SEXP snpQSEXP, SEXP snp_bj_idSEXP, SEXP verboseSEXP) {
+// compute_snpQ1rw
+Rcpp::NumericVector compute_snpQ1rw(Rcpp::NumericMatrix refcount, Rcpp::NumericMatrix totcount, Rcpp::NumericVector weight, Rcpp::NumericVector sampsize, Rcpp::LogicalVector readcount, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_snpQ1rw(SEXP refcountSEXP, SEXP totcountSEXP, SEXP weightSEXP, SEXP sampsizeSEXP, SEXP readcountSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ(snpQSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type snp_bj_id(snp_bj_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type sampsize(sampsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type readcount(readcountSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_Q_bjmeans(snpQ, snp_bj_id, verbose));
+    rcpp_result_gen = Rcpp::wrap(compute_snpQ1rw(refcount, totcount, weight, sampsize, readcount, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_F2_bjmeans
-Rcpp::NumericVector compute_F2_bjmeans(Rcpp::NumericMatrix snpQ1, Rcpp::NumericMatrix snpQ2, Rcpp::IntegerMatrix q1_idx, Rcpp::IntegerVector snp_bj_id, Rcpp::LogicalVector verbose);
-RcppExport SEXP _poolfstat_compute_F2_bjmeans(SEXP snpQ1SEXP, SEXP snpQ2SEXP, SEXP q1_idxSEXP, SEXP snp_bj_idSEXP, SEXP verboseSEXP) {
+// compute_snpQ2
+Rcpp::NumericVector compute_snpQ2(Rcpp::NumericMatrix refcount, Rcpp::NumericMatrix totcount, Rcpp::IntegerMatrix pairs, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_snpQ2(SEXP refcountSEXP, SEXP totcountSEXP, SEXP pairsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ1(snpQ1SEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ2(snpQ2SEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type q1_idx(q1_idxSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type snp_bj_id(snp_bj_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type pairs(pairsSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_F2_bjmeans(snpQ1, snpQ2, q1_idx, snp_bj_id, verbose));
+    rcpp_result_gen = Rcpp::wrap(compute_snpQ2(refcount, totcount, pairs, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_Ddenom_bjmeans
-Rcpp::NumericVector compute_Ddenom_bjmeans(Rcpp::NumericMatrix snpQ2, Rcpp::IntegerMatrix f2idx, Rcpp::IntegerVector snp_bj_id, Rcpp::LogicalVector verbose);
-RcppExport SEXP _poolfstat_compute_Ddenom_bjmeans(SEXP snpQ2SEXP, SEXP f2idxSEXP, SEXP snp_bj_idSEXP, SEXP verboseSEXP) {
+// compute_snpQ2rw
+Rcpp::NumericVector compute_snpQ2rw(Rcpp::NumericMatrix refcount, Rcpp::NumericMatrix totcount, Rcpp::IntegerMatrix pairs, Rcpp::NumericVector sampsize, Rcpp::LogicalVector readcount, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_snpQ2rw(SEXP refcountSEXP, SEXP totcountSEXP, SEXP pairsSEXP, SEXP sampsizeSEXP, SEXP readcountSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type snpQ2(snpQ2SEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type f2idx(f2idxSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type snp_bj_id(snp_bj_idSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type pairs(pairsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type sampsize(sampsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type readcount(readcountSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_Ddenom_bjmeans(snpQ2, f2idx, snp_bj_id, verbose));
+    rcpp_result_gen = Rcpp::wrap(compute_snpQ2rw(refcount, totcount, pairs, sampsize, readcount, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_snpHierFstAov
+Rcpp::NumericMatrix compute_snpHierFstAov(Rcpp::NumericMatrix refcount, Rcpp::NumericMatrix totcount, Rcpp::IntegerVector hapsize, Rcpp::IntegerVector popgrpidx, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_snpHierFstAov(SEXP refcountSEXP, SEXP totcountSEXP, SEXP hapsizeSEXP, SEXP popgrpidxSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type hapsize(hapsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type popgrpidx(popgrpidxSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_snpHierFstAov(refcount, totcount, hapsize, popgrpidx, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_snpFstAov
+Rcpp::NumericMatrix compute_snpFstAov(Rcpp::NumericMatrix refcount, Rcpp::NumericMatrix totcount, Rcpp::IntegerVector hapsize, Rcpp::LogicalVector verbose);
+RcppExport SEXP _poolfstat_compute_snpFstAov(SEXP refcountSEXP, SEXP totcountSEXP, SEXP hapsizeSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type hapsize(hapsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_snpFstAov(refcount, totcount, hapsize, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// block_sum
+Rcpp::NumericVector block_sum(Rcpp::NumericVector stat, Rcpp::IntegerVector snp_bj_id);
+RcppExport SEXP _poolfstat_block_sum(SEXP statSEXP, SEXP snp_bj_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type stat(statSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type snp_bj_id(snp_bj_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(block_sum(stat, snp_bj_id));
+    return rcpp_result_gen;
+END_RCPP
+}
+// block_sum2
+Rcpp::NumericVector block_sum2(Rcpp::NumericVector stat, Rcpp::IntegerMatrix snp_bj_id);
+RcppExport SEXP _poolfstat_block_sum2(SEXP statSEXP, SEXP snp_bj_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type stat(statSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type snp_bj_id(snp_bj_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(block_sum2(stat, snp_bj_id));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -276,6 +334,68 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// compute_snpQ1onepop
+Rcpp::NumericVector compute_snpQ1onepop(Rcpp::NumericVector refcount, Rcpp::NumericVector totcount, double weight);
+RcppExport SEXP _poolfstat_compute_snpQ1onepop(SEXP refcountSEXP, SEXP totcountSEXP, SEXP weightSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type refcount(refcountSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type totcount(totcountSEXP);
+    Rcpp::traits::input_parameter< double >::type weight(weightSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_snpQ1onepop(refcount, totcount, weight));
+    return rcpp_result_gen;
+END_RCPP
+}
+// compute_snpQ2onepair
+Rcpp::NumericVector compute_snpQ2onepair(Rcpp::NumericVector refcount1, Rcpp::NumericVector refcount2, Rcpp::NumericVector totcount1, Rcpp::NumericVector totcount2);
+RcppExport SEXP _poolfstat_compute_snpQ2onepair(SEXP refcount1SEXP, SEXP refcount2SEXP, SEXP totcount1SEXP, SEXP totcount2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type refcount1(refcount1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type refcount2(refcount2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type totcount1(totcount1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type totcount2(totcount2SEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_snpQ2onepair(refcount1, refcount2, totcount1, totcount2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simureads_poly
+IntegerMatrix simureads_poly(IntegerMatrix y_count, IntegerMatrix n_count, NumericVector lambda, double overdisp, int min_rc, double min_maf, double eps, double eps_exp);
+RcppExport SEXP _poolfstat_simureads_poly(SEXP y_countSEXP, SEXP n_countSEXP, SEXP lambdaSEXP, SEXP overdispSEXP, SEXP min_rcSEXP, SEXP min_mafSEXP, SEXP epsSEXP, SEXP eps_expSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type y_count(y_countSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type n_count(n_countSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< double >::type overdisp(overdispSEXP);
+    Rcpp::traits::input_parameter< int >::type min_rc(min_rcSEXP);
+    Rcpp::traits::input_parameter< double >::type min_maf(min_mafSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_exp(eps_expSEXP);
+    rcpp_result_gen = Rcpp::wrap(simureads_poly(y_count, n_count, lambda, overdisp, min_rc, min_maf, eps, eps_exp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simureads_mono
+IntegerMatrix simureads_mono(int npos, int npop, NumericVector lambda, double overdisp, int min_rc, double min_maf, double eps);
+RcppExport SEXP _poolfstat_simureads_mono(SEXP nposSEXP, SEXP npopSEXP, SEXP lambdaSEXP, SEXP overdispSEXP, SEXP min_rcSEXP, SEXP min_mafSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type npos(nposSEXP);
+    Rcpp::traits::input_parameter< int >::type npop(npopSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< double >::type overdisp(overdispSEXP);
+    Rcpp::traits::input_parameter< int >::type min_rc(min_rcSEXP);
+    Rcpp::traits::input_parameter< double >::type min_maf(min_mafSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(simureads_mono(npos, npop, lambda, overdisp, min_rc, min_maf, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_poolfstat_scan_allele_info", (DL_FUNC) &_poolfstat_scan_allele_info, 1},
@@ -283,10 +403,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_poolfstat_extract_nonvscan_counts", (DL_FUNC) &_poolfstat_extract_nonvscan_counts, 4},
     {"_poolfstat_extract_allele_names", (DL_FUNC) &_poolfstat_extract_allele_names, 2},
     {"_poolfstat_find_indelneighbor_idx", (DL_FUNC) &_poolfstat_find_indelneighbor_idx, 5},
-    {"_poolfstat_compute_Ddenom", (DL_FUNC) &_poolfstat_compute_Ddenom, 3},
-    {"_poolfstat_compute_Q_bjmeans", (DL_FUNC) &_poolfstat_compute_Q_bjmeans, 3},
-    {"_poolfstat_compute_F2_bjmeans", (DL_FUNC) &_poolfstat_compute_F2_bjmeans, 5},
-    {"_poolfstat_compute_Ddenom_bjmeans", (DL_FUNC) &_poolfstat_compute_Ddenom_bjmeans, 4},
+    {"_poolfstat_compute_snpQ1", (DL_FUNC) &_poolfstat_compute_snpQ1, 4},
+    {"_poolfstat_compute_snpQ1rw", (DL_FUNC) &_poolfstat_compute_snpQ1rw, 6},
+    {"_poolfstat_compute_snpQ2", (DL_FUNC) &_poolfstat_compute_snpQ2, 4},
+    {"_poolfstat_compute_snpQ2rw", (DL_FUNC) &_poolfstat_compute_snpQ2rw, 6},
+    {"_poolfstat_compute_snpHierFstAov", (DL_FUNC) &_poolfstat_compute_snpHierFstAov, 5},
+    {"_poolfstat_compute_snpFstAov", (DL_FUNC) &_poolfstat_compute_snpFstAov, 4},
+    {"_poolfstat_block_sum", (DL_FUNC) &_poolfstat_block_sum, 2},
+    {"_poolfstat_block_sum2", (DL_FUNC) &_poolfstat_block_sum2, 2},
     {"_poolfstat_compute_H1", (DL_FUNC) &_poolfstat_compute_H1, 5},
     {"_poolfstat_compute_Q2", (DL_FUNC) &_poolfstat_compute_Q2, 5},
     {"_poolfstat_compute_F3fromF2", (DL_FUNC) &_poolfstat_compute_F3fromF2, 3},
@@ -298,6 +422,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_poolfstat_compute_blockDdenom", (DL_FUNC) &_poolfstat_compute_blockDdenom, 5},
     {"_poolfstat_generateF4names", (DL_FUNC) &_poolfstat_generateF4names, 1},
     {"_poolfstat_compute_QmatfromF2samples", (DL_FUNC) &_poolfstat_compute_QmatfromF2samples, 3},
+    {"_poolfstat_compute_snpQ1onepop", (DL_FUNC) &_poolfstat_compute_snpQ1onepop, 3},
+    {"_poolfstat_compute_snpQ2onepair", (DL_FUNC) &_poolfstat_compute_snpQ2onepair, 4},
+    {"_poolfstat_simureads_poly", (DL_FUNC) &_poolfstat_simureads_poly, 8},
+    {"_poolfstat_simureads_mono", (DL_FUNC) &_poolfstat_simureads_mono, 7},
     {NULL, NULL, 0}
 };
 

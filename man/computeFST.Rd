@@ -2,11 +2,13 @@
 % Please edit documentation in R/computeFST.R
 \name{computeFST}
 \alias{computeFST}
-\title{Compute FST from Pool-Seq data or Count data}
+\title{Compute Fst from Pool-Seq data or Count data}
 \usage{
 computeFST(
   x,
   method = "Anova",
+  struct = NULL,
+  weightpid = FALSE,
   nsnp.per.bjack.block = 0,
   sliding.window.size = 0,
   verbose = TRUE
@@ -15,7 +17,11 @@ computeFST(
 \arguments{
 \item{x}{A pooldata object containing Pool-Seq information or countdata object containing allele counts information}
 
-\item{method}{Either "Anova" (default method as described in Hivert et al (2018, eq. 9) for pool-seq data and Weir (1996, eq. 5.2) for count data) or "Identity" (relying on unbiased estimators of Probability of Identity within and across pairs of pools/populations)}
+\item{method}{Either "Anova" (default method) or "Identity" (relying on unbiased estimators of Probability of Identity within and across pairs of pools/populations)}
+
+\item{struct}{Vector of length equal to the number of pop. sample that give the pop. sample group name of index (i.e., structure)}
+
+\item{weightpid}{When method="Identity", if TRUE weighting averages of pop. Q1 and pairwise Q2 are performed (see eq. A46 and A47 in Hivert et al., 2018 for PoolSeq and Rousset 2007 for count data) to compute overall Q1 and Q2. If not, unweighted averages are performed.}
 
 \item{nsnp.per.bjack.block}{Number of consecutive SNPs within a block for block-jackknife (default=0, i.e., no block-jackknife sampling)}
 
@@ -26,23 +32,22 @@ computeFST(
 \value{
 A list with the four following elements:
 \enumerate{
-\item "FST": a scalar corresponding to the estimate of the genome-wide FST over all the populations
-\item "snp.FST": a vector containing estimates of SNP-specific FST
-\item "snp.Q1": a vector containing estimates of the overall within pop. SNP-specific probability of identity
-\item "snp.Q2": a vector containing estimates of the overall between pop. SNP-specific probability of identity
-\item "mean.fst" (if nsnp.per.bjack.block>0): genome-wide Fst estimate as the mean over block-jackknife samples (may slight differ from "FST" estimate since it is only computed on SNPs eligible for Block-Jackknife)
-\item "se.fst" (if nsnp.per.bjack.block>0): standard-error of the genome-wide Fst estimate computed block-jackknife samples
-\item "fst.bjack.samples" (if nsnp.per.bjack.block>0): a vector containing estimates of the overall between pop. SNP-specific probability of identity
-\item "sliding.windows.fst" (if sliding.window.size>0): a 4-columns data frame containing information on multi-locus Fst computed for sliding windows of SNPs over the whole genome with i) column with the chromosome/contig of origin of each window; ii) the mid-position of each window; iii) the cumulated mid-position of each window (to facilitate further plotting); and iv) the estimated multi-locus Fst
+\item "FST": estimate of genome-wide Fst over all the populations. The element is a vector with 5 elements corresponding to i) the estimated value over all SNPs; ii) the block-jackknife mean; iii)  the block-jackknife s.e.; iv) the lower; and v) the upper bound of the 95% (block-jackknife) Confidence Interval estimates. If nsnp.per.bjack.block=0, only the estimated value is given (other elements are set to NA).
+\item "FSG": under the hierarchical Fst model (i.e., when struct vector is non-null); estimates estimate of genome-wide within-group differentiation (Fsg). The element is a vector with 5 elements corresponding to i) the estimated value over all SNPs; ii) the block-jackknife mean; iii)  the block-jackknife s.e.; iv) the lower; and v) the upper bound of the 95% (block-jackknife) Confidence Interval estimates. If nsnp.per.bjack.block=0, only the estimated value is given (other elements are set to NA).
+\item "FGT": under the hierarchical Fst model (i.e., when struct vector is non-null); estimates estimate of genome-wide between-group differentiation (Fgt). The element is a vector with 5 elements corresponding to i) the estimated value over all SNPs; ii) the block-jackknife mean; iii)  the block-jackknife s.e.; iv) the lower; and v) the upper bound of the 95% (block-jackknife) Confidence Interval estimates. If nsnp.per.bjack.block=0, only the estimated value is given (other elements are set to NA).
+\item "snp.Fstats": a data frame containing SNP-specific estimates of Fst and also under the hierarchical (i.e., when struct vector is non-null) SNP-specific estimates Fsg and Fgt
+\item "snp.Q": a data frame containing SNP-specific estimates of Q1 (within-population) and Q2 (between-population) probability of identity and also under the hierarchical (i.e., when struct vector is non-null) SNP-specific estimates of Q3, the probability of identity between populations from different groups (under this model Q2 is then the Pid between populations from the same group).
+\item "sliding.windows.fvalues" (if sliding.window.size>0): a 4 or 6 (under hierarchical Fst model) column data frame containing information on multi-locus Fst (and Fsg and Fgt under the hierarchical Fst model) computed for sliding windows of SNPs over the whole genome with i) column with the chromosome/contig of origin of each window; ii) the mid-position of each window; iii) the cumulated mid-position of each window (to facilitate further plotting); iv) the estimated multi-locus Fst; and under the hierarchical Fst model v) the estimated multi-locus Fsg and ; vi) the estimated multi-locus Fgt
 }
 }
 \description{
-Compute FST from Pool-Seq data or Count data
+Compute Fst from Pool-Seq data or Count data
 }
 \examples{
  make.example.files(writing.dir=tempdir())
  pooldata=popsync2pooldata(sync.file=paste0(tempdir(),"/ex.sync.gz"),poolsizes=rep(50,15))
  res.fst=computeFST(pooldata)
+ res.hierfst=computeFST(pooldata,struct=c(rep("A",5),rep("B",7),rep("C",3)))
 }
 \seealso{
 To generate pooldata object, see \code{\link{vcf2pooldata}}, \code{\link{popsync2pooldata}},\code{\link{genobaypass2pooldata}} or \code{\link{genoselestim2pooldata}}. To generate coundata object, see \code{\link{genobaypass2countdata}} or \code{\link{genotreemix2countdata}}.

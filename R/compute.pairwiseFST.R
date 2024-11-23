@@ -4,7 +4,7 @@
 #' @param min.cov.per.pool For Pool-Seq data (i.e., pooldata objects) only: minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded in the corresponding pairwise comparisons
 #' @param max.cov.per.pool For Pool-Seq data (i.e., pooldata objects) only: maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded in the corresponding pairwise comparisons.
 #' @param min.indgeno.per.pop  For allele count data (i.e., countdata objects) only: minimal number of overall counts required in each population. If at least one pop is not genotyped for at least min.indgeno.per.pop (haploid) individual, the position is discarded
-#' @param min.maf Minimal allowed Minor Allele Frequency (computed from the ratio overal read counts for the reference allele over the read coverage)  in the pairwise comparisons.
+#' @param min.maf Minimal allowed Minor Allele Frequency (computed from the ratio over all read counts for the reference allele over the read coverage)  in the pairwise comparisons.
 #' @param output.snp.values If TRUE, provide SNP-specific pairwise FST for each comparisons (may lead to a huge result object if the number of pools and/or SNPs is large)
 #' @param nsnp.per.bjack.block Number of consecutive SNPs within a block for block-jackknife (default=0, i.e., no block-jackknife sampling) 
 #' @param verbose If TRUE extra information is printed on the terminal
@@ -24,11 +24,10 @@ compute.pairwiseFST<-function(x,method="Anova",min.cov.per.pool=-1,max.cov.per.p
   if(is.countdata(x)){npops=x@npops ; popnames=x@popnames ; pooldata=FALSE}  
 
   if(npops<3){stop("At least 3 pools (or pops) should be given to compute the matrix")}
-  if(npops>20){warning("with >20 pop samples it is recommended to utilize the compute.fstats function (significantly faster and far more memory-efficient) to obtain the pairwise FST matrix (pairwise.fst slot of the fstats output object) that can be visualized using heatmap or other conventional clustering techniques (see the vignette).")}
+  if(npops>50){cat("WARNING: with large number of pop samples you may also consider using the compute.fstats function (significantly faster and far more memory-efficient) to obtain the pairwise FST matrix (pairwise.fst slot of the fstats output object) that can be visualized using heatmap or other conventional clustering techniques (see the vignette).\n")}
   time1=proc.time()
     
   out=new("pairwisefst")
-  if(nsnp.per.bjack.block>0){out@blockjacknife=TRUE}else{out@blockjacknife=FALSE}
   out@PairwiseFSTmatrix=matrix(NA,npops,npops)
   colnames(out@PairwiseFSTmatrix)=rownames(out@PairwiseFSTmatrix)=popnames  
   n.pairs=npops*(npops-1)/2
@@ -37,160 +36,103 @@ compute.pairwiseFST<-function(x,method="Anova",min.cov.per.pool=-1,max.cov.per.p
   out@values=as.data.frame(matrix(0,n.pairs,7))
   colnames(out@values)=c("Fst Estimate","Fst bjack mean","Fst bjack s.e.","Q2 Estimate","Q2 bjack mean","Q2 bjack s.e.","Nsnp")
   rownames(out@values)=pop.pairs.names
-  if(output.snp.values | out@blockjacknife){
+  out@blockjacknife=ifelse(nsnp.per.bjack.block>0,TRUE,FALSE)
+
+  if(output.snp.values){
+    tmp.size.GB=x@nsnp*n.pairs*8/1e9
+    if(tmp.size.GB>4){
+      cat("WARNING: because output.snp.values=TRUE, three large data frame each of >4 GB will be created to store SNP-specific Q1, Q2 and Fst for each population pairs. Be sure to have enough RAM available and that you really need SNP-specific estimates (that also can be obtained with computeFST function for a given specific pair or over all populations)\n")
+    }
     out@PairwiseSnpQ1=matrix(NA,x@nsnp,n.pairs)#,dimnames=list(paste0("rs",1:x@nsnp),pop.pairs.names))
     colnames(out@PairwiseSnpQ1)=pop.pairs.names
     out@PairwiseSnpQ2=out@PairwiseSnpQ1
-    if(output.snp.values){out@PairwiseSnpFST=out@PairwiseSnpQ1}
-    if(method=="Anova"){snp.Nc=matrix(NA,x@nsnp,n.pairs)}
-    #Si anova: FST=sum(Nc*(snpQ1-snpQ2))/sum(Nc*(1-snpQ2))=sum(MSP-MSI)/sum(MSP-(nc-1)MSI) #En effet nc varie entre les SNPs
+    out@PairwiseSnpFST=out@PairwiseSnpQ1
   }
-  ###
-  #On recalcule les Q1 et Q2 pour chaque paire
-  cnt.pair=0 
-  if(verbose){
-    cat("Computation of the",n.pairs,"pairwise Fst\n")
- #   pb <- txtProgressBar(min = 0, max = n.pairs, style = 3)
-    pb <- progress_bar$new(format = " [:bar] :percent eta: :eta",total = n.pairs, clear = FALSE, width= 60)
-  }
-  
   #crit cov snp per pop
   if(pooldata){
     snp.cov.filt=x@readcoverage>=min.cov.per.pool & x@readcoverage<=max.cov.per.pool
   }else{
     snp.cov.filt=x@total.count>=min.indgeno.per.pop
   }
-  #optimisation: stockage produit des comptages (pas les meme selon methode)
-  if(method=="Identity"){
-    if(pooldata){#pour Q1
-      tmp.cntalt=x@readcoverage-x@refallele.readcount
-      prodcount=(x@refallele.readcount*(x@refallele.readcount-1) + tmp.cntalt*(tmp.cntalt-1))/(x@readcoverage*(x@readcoverage-1))
-    }else{#pour le Q1
-      tmp.cntalt=x@total.count-x@refallele.count
-      prodcount=(x@refallele.count*(x@refallele.count-1) + tmp.cntalt*(tmp.cntalt-1))/(x@total.count*(x@total.count-1))
-    }
-    rm(tmp.cntalt)
-  }else{
-    if(pooldata){#pour le SSI
-      prodcount=x@refallele.readcount*(x@readcoverage-x@refallele.readcount)/x@readcoverage
-    }else{#pour le MSG
-      prodcount=x@refallele.count*(x@total.count-x@refallele.count)/x@total.count
-    }
+  ###
+  if(verbose){
+    cat("Computation of the",n.pairs,"pairwise Fst\n")
+    pb <- progress_bar$new(format = " [:bar] :percent eta: :eta",total = n.pairs, clear = FALSE, width= 60)
   }
-      
+ ###
+  cnt.pair=0
+  pair.code=matrix(c(0,1),nrow=1) #for built-in cpp identity function
   for(p in 1:(npops-1)){
     for(q in (p+1):(npops)){
-      cnt.pair=cnt.pair+1
-      ##snp.sel
-      if(pooldata){
-        tmp.Ntot=rowSums(x@readcoverage[,c(p,q)])
-        tmp.maf=0.5-abs(0.5-rowSums(x@refallele.readcount[,c(p,q)])/tmp.Ntot)
-      }else{
-        tmp.Ntot=rowSums(x@total.count[,c(p,q)])
-        tmp.maf=0.5-abs(0.5-rowSums(x@refallele.count[,c(p,q)])/tmp.Ntot)
-      }
-      tmp.snp.sel=tmp.Ntot>0 & snp.cov.filt[,p] & snp.cov.filt[,q] & (tmp.maf>min.maf) 
-      ##calcul snp.Q1 et snp.Q2 selon methode et type de donnees
-      if(method=="Identity"){
-        if(!pooldata){
-          snp.Q1=rowMeans(prodcount[,c(p,q)],na.rm=T) 
-          snp.Q2=( x@refallele.count[,p]*x@refallele.count[,q] + (x@total.count[,p]-x@refallele.count[,p])*(x@total.count[,q]-x@refallele.count[,q]))/(x@total.count[,p]*x@total.count[,q])
-        }else{#see eq. A39 (Hivert et al., 2018)
-          #  Q1 = (1/(matrix(1,x@nsnp,x@npools) %*% diag(x@poolsizes-1)))*(Q1 %*% diag(x@poolsizes) - 1) 
-          snp.Q1=t((t(prodcount[,c(p,q)])*x@poolsizes[c(p,q)]-1)/(x@poolsizes[c(p,q)]-1)) #equivalent optimise (utilise operation matrix*vectuer qui se fait en colonnes)
-          lambdaj=x@poolsizes[c(p,q)]*(x@poolsizes[c(p,q)]-1)
-          lambdaj=lambdaj/sum(lambdaj)
-          snp.Q1=rowSums(t(t(snp.Q1)*lambdaj))
-          snp.Q2=( x@refallele.readcount[,p]*x@refallele.readcount[,q] + (x@readcoverage[,p]-x@refallele.readcount[,p])*(x@readcoverage[,q]-x@refallele.readcount[,q]))/(x@readcoverage[,p]*x@readcoverage[,q])
+     cnt.pair=cnt.pair+1
+     ##snp.sel
+     if(pooldata){
+       tmp.Ntot=rowSums(x@readcoverage[,c(p,q)])
+       tmp.maf=0.5-abs(0.5-rowSums(x@refallele.readcount[,c(p,q)])/tmp.Ntot)
+     }else{
+       tmp.Ntot=rowSums(x@total.count[,c(p,q)])
+       tmp.maf=0.5-abs(0.5-rowSums(x@refallele.count[,c(p,q)])/tmp.Ntot)
+     }
+     tmp.snp.sel=tmp.Ntot>0 & snp.cov.filt[,p] & snp.cov.filt[,q] & (tmp.maf>min.maf) 
+     tmp.nsnp=sum(tmp.snp.sel)
+     ##calcul snp.Q1 et snp.Q2 selon methode et type de donnees
+     if(method=="Identity"){
+       if(is.countdata(x)){
+         tmp.Q1=.compute_snpQ1(x@refallele.count[tmp.snp.sel,c(p,q)],x@total.count[tmp.snp.sel,c(p,q)],rep(1,2),verbose=FALSE)
+         tmp.Q2=.compute_snpQ2(x@refallele.count[tmp.snp.sel,c(p,q)],x@total.count[tmp.snp.sel,c(p,q)],pair.code,verbose=FALSE)
+       }else{
+         tmp.Q1=.compute_snpQ1(x@refallele.readcount[tmp.snp.sel,c(p,q)],x@readcoverage[tmp.snp.sel,c(p,q)],
+                               x@poolsizes[c(p,q)]/(x@poolsizes[c(p,q)]-1),verbose=FALSE) 
+         tmp.Q2=.compute_snpQ2(x@refallele.readcount[tmp.snp.sel,c(p,q)],x@readcoverage[tmp.snp.sel,c(p,q)],pair.code,verbose=FALSE)
+       }
+       num.fst=tmp.Q1 - tmp.Q2
+       den.fst=1. - tmp.Q2 #same as den.fgt
         }
-        hat.Q2=mean(snp.Q2[tmp.snp.sel],na.rm=TRUE)
-        hat.fst=sum(snp.Q1[tmp.snp.sel]-snp.Q2[tmp.snp.sel],na.rm=TRUE)/sum(1-snp.Q2[tmp.snp.sel],na.rm=TRUE)
+
+     if(method=="Anova"){
+       if(is.countdata(x)){
+         tmp.aov=.compute_snpFstAov(x@refallele.count[tmp.snp.sel,c(p,q)],x@total.count[tmp.snp.sel,c(p,q)],rep(-1,2),verbose=FALSE)
+       }else{
+         tmp.aov=.compute_snpFstAov(x@refallele.readcount[tmp.snp.sel,c(p,q)],x@readcoverage[tmp.snp.sel,c(p,q)],
+                                    x@poolsizes[c(p,q)],verbose=FALSE)
+       }
+       tmp.Q1=1.-tmp.aov[,1]                                         #1-MSG
+       tmp.Q2=tmp.Q1 - (tmp.aov[,2]-tmp.aov[,1])/tmp.aov[,3] #1 - MSG - (MSP - MSG) / n_c       
+       num.fst=tmp.aov[,2]-tmp.aov[,1]                          #MSP-MSG :
+       den.fst=tmp.aov[,2]+(tmp.aov[,3]-1)*tmp.aov[,1]          #MSP + (n_c- 1) * MSG 
+       #important de ne pas passer par les Q1 et Q2 pour garder le facteur nc le calcul multilocus      
+     }
+     ## 
+     keep=!(is.na(num.fst) | is.na(den.fst)) 
+     out@values[cnt.pair,1]=out@PairwiseFSTmatrix[p,q]=out@PairwiseFSTmatrix[q,p]=sum(num.fst[keep])/sum(den.fst[keep])
+     out@values[cnt.pair,4]=mean(tmp.Q2[keep])
+     out@values[cnt.pair,7]=tmp.nsnp
+     if(out@blockjacknife){
+       fake.obj=new("countdata")
+       fake.obj@nsnp=tmp.nsnp ; fake.obj@snp.info=x@snp.info[tmp.snp.sel,] 
+       bjack.blocks=generate.jackknife.blocks(fake.obj,nsnp.per.bjack.block,verbose=FALSE)
+       bjack.fact=(bjack.blocks$nblocks-1)/sqrt(bjack.blocks$nblocks)
+       
+       keep=keep & !is.na(bjack.blocks$snp.block.id)
+       tmp.snp.block.id=bjack.blocks$snp.block.id[keep]-1 #0 indexed for cpp
+       num.fst.blk.contrib=.block_sum(num.fst[keep],tmp.snp.block.id)
+       den.fst.blk.contrib=.block_sum(den.fst[keep],tmp.snp.block.id)
+       sampled.fst=(num.fst.blk.contrib-sum(num.fst.blk.contrib))/(den.fst.blk.contrib-sum(den.fst.blk.contrib))
+       out@values[cnt.pair,2]=mean(sampled.fst) ; out@values[cnt.pair,3]=sd(sampled.fst)*bjack.fact
+       sampled.q2=.block_sum(tmp.Q2[keep],tmp.snp.block.id)
+       sampled.q2=(sum(sampled.q2)-sampled.q2)/(tmp.nsnp-nsnp.per.bjack.block)
+       out@values[cnt.pair,5]=mean(sampled.q2) ; out@values[cnt.pair,6]=sd(sampled.q2)*bjack.fact
+       }
+     if(output.snp.values){
+       out@PairwiseSnpQ1[tmp.snp.sel,cnt.pair]=tmp.Q1
+       out@PairwiseSnpQ2[tmp.snp.sel,cnt.pair]=tmp.Q2
+       out@PairwiseSnpFST[tmp.snp.sel,cnt.pair]=num.fst/den.fst
       }
-      if (method=="Anova"){
-        if(!pooldata){#eq 5.2 in Weir 1996
-          SumNi=rowSums(x@total.count[,c(p,q)])
-          Nic=x@total.count[,c(p,q)]-(x@total.count[,c(p,q)]**2)/SumNi
-          Nc=rowSums(Nic)#/(x@npops-1) : ici 2-1=1
-          MSG=2*(rowSums(prodcount[,c(p,q)])) /(SumNi-2)
-          PA=rowSums(x@refallele.count[,c(p,q)])/SumNi
-          MSP=2*(rowSums(x@total.count[,c(p,q)]*((x@refallele.count[,c(p,q)]/x@total.count[,c(p,q)]-PA)**2)))#/(x@npops-1) : ici 2-1=1
-          snp.Q1 = 1 - MSG ; snp.Q2 = 1 - MSG - (MSP - MSG) / Nc
-          hat.fst=sum(Nc[tmp.snp.sel]*(snp.Q1[tmp.snp.sel]-snp.Q2[tmp.snp.sel]),na.rm=TRUE)/sum(Nc[tmp.snp.sel]*(1-snp.Q2[tmp.snp.sel]),na.rm=TRUE)
-          if(out@blockjacknife){snp.Nc[tmp.snp.sel,cnt.pair] = Nc[tmp.snp.sel] }#important de laisser a NA les non sel (ponderation automatique dans block jackknife)
-        }else{#Hivert et al. 2018
-          mtrx.n_i <- matrix(x@poolsizes[c(p,q)],nrow = x@nsnp,ncol = 2,byrow = TRUE)
-          C_1 <- rowSums(x@readcoverage[,c(p,q)])
-          C_2 <- rowSums(x@readcoverage[,c(p,q)]^2)
-          D_2 <- rowSums(x@readcoverage[,c(p,q)] / mtrx.n_i + (mtrx.n_i - 1) / mtrx.n_i,na.rm = TRUE)
-          D_2.star <- rowSums(x@readcoverage[,c(p,q)] * (x@readcoverage[,c(p,q)] / mtrx.n_i + (mtrx.n_i - 1) / mtrx.n_i),na.rm = TRUE) / C_1
-          n_c <- (C_1 - C_2 / C_1) / (D_2 - D_2.star)
-          SSI <- 2*rowSums(prodcount[,c(p,q)])
-          SA<-rowSums(x@refallele.readcount[,c(p,q)])/C_1
-          SSP<-2*rowSums(x@readcoverage[,c(p,q)]*((x@refallele.readcount[,c(p,q)]/x@readcoverage[,c(p,q)]-SA)**2))
-          MSI <- SSI / (C_1 - D_2)
-          MSP <- SSP / (D_2 - D_2.star)
-          snp.Q1 = 1 - MSI ; snp.Q2 = 1 - MSI - (MSP - MSI) / n_c
-          hat.fst=sum(n_c[tmp.snp.sel]*(snp.Q1[tmp.snp.sel]-snp.Q2[tmp.snp.sel]),na.rm=TRUE)/sum(n_c[tmp.snp.sel]*(1-snp.Q2[tmp.snp.sel]),na.rm=TRUE)
-          if(out@blockjacknife){snp.Nc[tmp.snp.sel,cnt.pair] = n_c[tmp.snp.sel] }#important de laisser a NA les non sel (ponderation automatique dans block jackknife)
-        }
-        hat.Q2=mean(snp.Q2[tmp.snp.sel],na.rm=TRUE)
-      }
-      out@PairwiseFSTmatrix[p,q]=out@PairwiseFSTmatrix[q,p]=hat.fst
-      out@values[cnt.pair,1]=hat.fst
-      out@values[cnt.pair,4]=hat.Q2     
-      out@values[cnt.pair,7]=length(tmp.snp.sel)
-      if(output.snp.values | out@blockjacknife){
-        out@PairwiseSnpQ1[tmp.snp.sel,cnt.pair]=snp.Q1[tmp.snp.sel]
-        out@PairwiseSnpQ2[tmp.snp.sel,cnt.pair]=snp.Q2[tmp.snp.sel]
-        if(output.snp.values){out@PairwiseSnpFST[tmp.snp.sel,cnt.pair]=(snp.Q1[tmp.snp.sel]-snp.Q2[tmp.snp.sel])/(1-snp.Q2[tmp.snp.sel])}
-      }      
+    ###     
       if(verbose){pb$tick()}#        setTxtProgressBar(pb, cnt.pair)}
     }
   }
-  if(verbose){pb$terminate()}#close(pb)}
-  
-  ##start blockjackknife
-  if(out@blockjacknife){
-    if(verbose){cat("Starting Block-Jackknife sampling\n")}
-    bjack.blocks=generate.jackknife.blocks(x,nsnp.per.bjack.block,verbose=verbose)
-    tmp.idx.sel=!is.na(bjack.blocks$snp.block.id) 
-    tmp.snp.block.id=bjack.blocks$snp.block.id[tmp.idx.sel]
-    if(method=="Identity"){
-      tmp.sampled.q1=apply(out@PairwiseSnpQ1[tmp.idx.sel,],2,function(y){return(by(y,tmp.snp.block.id,sum,na.rm=T))})
-    }else{
-      tmp.sampled.q1=apply(out@PairwiseSnpQ1[tmp.idx.sel,]*snp.Nc[tmp.idx.sel,],2,function(y){return(by(y,tmp.snp.block.id,sum,na.rm=T))})      
-    }
-    if(!output.snp.values){out@PairwiseSnpQ1=matrix(NA,0,0); gc()}
-    tmp.sampled.q1=colSums(tmp.sampled.q1,na.rm=T)-t(tmp.sampled.q1)  
-    tmp.sampled.q2=apply(out@PairwiseSnpQ2[tmp.idx.sel,],2,function(y){return(by(y,tmp.snp.block.id,sum,na.rm=T))})
-    tmp.sampled.q2=colSums(tmp.sampled.q2,na.rm=T)-t(tmp.sampled.q2)  
-    if(method=="Anova"){
-      tmp.sampled.ncq2=apply(out@PairwiseSnpQ2[tmp.idx.sel,]*snp.Nc[tmp.idx.sel,],2,function(y){return(by(y,tmp.snp.block.id,sum,na.rm=T))})
-      tmp.sampled.ncq2=colSums(tmp.sampled.ncq2,na.rm=T)-t(tmp.sampled.ncq2)
-      tmp.sampled.sumnc=apply(snp.Nc[tmp.idx.sel,],2,function(y){return(by(y,tmp.snp.block.id,sum,na.rm=T))})
-      tmp.sampled.sumnc=colSums(tmp.sampled.sumnc,na.rm=T)-t(tmp.sampled.sumnc) 
-      sampled.fst=(tmp.sampled.q1-tmp.sampled.ncq2) / (tmp.sampled.sumnc-tmp.sampled.ncq2)  
-      rm(tmp.sampled.ncq2,tmp.sampled.sumnc)
-    }else{
-      tmp.snp.cnt=apply(1-(is.na(out@PairwiseSnpQ2[tmp.idx.sel,])|is.na(out@PairwiseSnpQ2[tmp.idx.sel,])),2,function(y){return(by(y,tmp.snp.block.id,sum,na.rm=T))})
-      tmp.snp.cnt=colSums(tmp.snp.cnt,na.rm=T)-t(tmp.snp.cnt) 
-      sampled.fst=(tmp.sampled.q1-tmp.sampled.q2) / (tmp.snp.cnt-tmp.sampled.q2)  
-    }
-    rm(tmp.sampled.q1)
-    out@values[,2]=rowMeans(sampled.fst)
-    out@values[,3]=apply(sampled.fst,1,sd)*(bjack.blocks$nblocks-1)/sqrt(bjack.blocks$nblocks)
-    #correction des q2: a ce stade sum: on doit faire moyenne par blocs
-    tmp.snp.cnt=apply(1-is.na(out@PairwiseSnpQ2[tmp.idx.sel,]),2,function(y){return(by(y,tmp.snp.block.id,sum,na.rm=T))})
-    tmp.snp.cnt=colSums(tmp.snp.cnt,na.rm=T)-t(tmp.snp.cnt) 
-    if(!output.snp.values){out@PairwiseSnpQ2=matrix(NA,0,0) ; gc()}
-    tmp.sampled.q2=tmp.sampled.q2/tmp.snp.cnt
-    out@values[,5]=rowMeans(tmp.sampled.q2)
-    out@values[,6]=apply(tmp.sampled.q2,1,sd)*(bjack.blocks$nblocks-1)/sqrt(bjack.blocks$nblocks) 
-  }else{
-    out@values=out@values[,c(1,4,7)]
-  }
-  ###
-
+  if(!out@blockjacknife){out@values=out@values[,c(1,4,7)]}
   time.elapsed=((proc.time()-time1)[3])
   nhours=floor(time.elapsed/3600) ; nminutes=floor((time.elapsed-nhours*3600)/60) ;  nseconds=round(time.elapsed-nhours*3600-nminutes*60)    
   cat("\nOverall Analysis Time:",nhours,"h",nminutes, "m",nseconds,"s\n")  

@@ -4,6 +4,14 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
 bibentry(bibtype="Article",
+         author =  "Gautier M., Coronado-Zamora M. and Vitalis R.",
+         title = 	 "Estimating hierarchical F-statistics from Pool-Seq data",
+         journal = 	 "bioRxiv",
+         year = 	 2024,
+         textVersion ="Gautier M., Coronado-Zamora M. and Vitalis R. (2024). Estimating hierarchical F-statistics from Pool-Seq data. bioRxiv." )
+
+
+bibentry(bibtype="Article",
          author =  "Gautier M., Vitalis R., Flori L. and Estoup A.",
          title = 	 "f-statistics estimation and admixture graph construction with Pool-Seq or allele count data using the R package poolfstat",
          journal = 	 "Molecular Ecology Resources",

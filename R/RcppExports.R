@@ -130,6 +130,202 @@
     .Call('_poolfstat_find_indelneighbor_idx', PACKAGE = 'poolfstat', contig, position, indels_idx, min_dist, indels_size)
 }
 
+#' @title compute_snpQ1
+#' @name compute_snpQ1
+#' @rdname compute_snpQ1
+#'
+#' @description
+#' Compute SNP-specific Q1 by averaging over all samples
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param weight Vector of length npop giving the weighting scheme (w=1 for allele count data and w=poolsize/(poolsize-1) for PoolSeq data)
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute all the SNP-specific Q1 over all pop. samples (useful for Fst computation with method Identity). 
+#' 
+#' @return Return a vector of length nsnps with SNP-specific Q1
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpQ1 <- function(refcount, totcount, weight, verbose) {
+    .Call('_poolfstat_compute_snpQ1', PACKAGE = 'poolfstat', refcount, totcount, weight, verbose)
+}
+
+#' @title compute_snpQ1rw
+#' @name compute_snpQ1rw
+#' @rdname compute_snpQ1rw
+#'
+#' @description
+#' Compute SNP-specific Q1 over all samples using weighting averages of pop. Q1 (eq. A46 in Hivert et al., 2018)
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param weight Vector of length npop giving the weighting scheme (w=1 for allele count data and w=poolsize/(poolsize-1) for PoolSeq data)
+#' @param sampsize Vector of length npop giving the haploid sample size (not used for count data)
+#' @param readcount Logical (if TRUE PoolSeq data assumed i.e. weights depending on haploid size, otherwise weights depend on total counts)
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute all the SNP-specific Q1 over all pop. samples using weighting averages of pop. Q1 as in eq. A46 of Hivert et al., 2018 (useful for Fst computation with method Identity). 
+#' 
+#' @return Return a vector of length nsnps with SNP-specific Q1
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpQ1rw <- function(refcount, totcount, weight, sampsize, readcount, verbose) {
+    .Call('_poolfstat_compute_snpQ1rw', PACKAGE = 'poolfstat', refcount, totcount, weight, sampsize, readcount, verbose)
+}
+
+#' @title compute_snpQ2
+#' @name compute_snpQ2
+#' @rdname compute_snpQ2
+#'
+#' @description
+#' Compute SNP-specific Q2 by averaging over all pairs of samples
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param pairs Matrix of npoppairsx2 giving the index for all the pairs of pops included in the computation
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute all the SNP-specific Q2 over all pop. pairs (useful for Fst computation with method Identity). 
+#' 
+#' @return Return a vector of length nsnps with SNP-specific Q2
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpQ2 <- function(refcount, totcount, pairs, verbose) {
+    .Call('_poolfstat_compute_snpQ2', PACKAGE = 'poolfstat', refcount, totcount, pairs, verbose)
+}
+
+#' @title compute_snpQ2rw
+#' @name compute_snpQ2rw
+#' @rdname compute_snpQ2w
+#'
+#' @description
+#' Compute SNP-specific Q2 by averaging over all pairs of samples using weighting averages of pairwise Q2 (eq. A47 in Hivert et al., 2018)
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param pairs Matrix of npoppairsx2 giving the index for all the pairs of pops included in the computation
+#' @param sampsize Vector of length npop giving the haploid sample size (not used for count data)
+#' @param readcount Logical (if TRUE PoolSeq data assumed i.e. weights depending on haploid size, otherwise weights depend on total counts)
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute SNP-specific Q2 by averaging over all pairs of samples using weighting averages of pairwise Q2 (eq. A47 in Hivert et al., 2018)
+#' (useful for Fst computation with method Identity). 
+#' 
+#' @return Return a vector of length nsnps with SNP-specific Q2
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpQ2rw <- function(refcount, totcount, pairs, sampsize, readcount, verbose) {
+    .Call('_poolfstat_compute_snpQ2rw', PACKAGE = 'poolfstat', refcount, totcount, pairs, sampsize, readcount, verbose)
+}
+
+#' @title compute_snpHierFstAov
+#' @name compute_snpHierFstAov
+#' @rdname compute_snpHierFstAov
+#'
+#' @description
+#' Compute SNP-specific MSI, MSP, MSG, nc, nc_p and nc_pp used to derived the Anova estimator of hier. Fst for allele count or read count data (Pool-Seq)
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param hapsize Vector of length npop giving the haploid size of each pool (if one element <=0, counts are interpreted as count data)
+#' @param popgrpidx Vector of length npop giving the index (coded from 0 to ngrp-1) of the group of origin
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute SNP-specific MSI, MSP, MSG, nc, nc_p and nc_pp used to derived the Anova estimator of hier. Fst for allele count or read count data (Pool-Seq)
+#' 
+#' @return Return a nsnpsx6 matrix with SNP-specific MSI, MSP, MSG, nc, nc_p and nc_pp
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpHierFstAov <- function(refcount, totcount, hapsize, popgrpidx, verbose) {
+    .Call('_poolfstat_compute_snpHierFstAov', PACKAGE = 'poolfstat', refcount, totcount, hapsize, popgrpidx, verbose)
+}
+
+#' @title compute_snpFstAov
+#' @name compute_snpFstAov
+#' @rdname compute_snpFstAov
+#'
+#' @description
+#' Compute SNP-specific MSG, MSP and nc used to derived the Anova estimator of Fst for allele count or read count data (Pool-Seq)
+#'
+#' @param refcount Matrix of nsnpxnpop with counts (genotype or reads) for the reference allele
+#' @param totcount Matrix of nsnpxnpop with total counts or read coverages
+#' @param hapsize Vector of length npop giving the haploid size of each pool (if one element <=0, counts are interpreted as count data)
+#' @param verbose Logical (if TRUE progression bar is printed on the terminal)
+#'
+#' @details
+#' Compute SNP-specific Q1 and Q2 based on Anova estimator of Fst for allele count or read count data (Pool-Seq).
+#' For allele count data, the implemented estimator corresponds to that described in Weir, 1996 (eq. 5.2)  
+#' For read (Pool-Seq) data, the implemented estimator corresponds to that described in Hivert et al., 2016  
+#' 
+#' @return Return a nsnpsx3 matrix with SNP-specific MSG, MSP and nc
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpFstAov <- function(refcount, totcount, hapsize, verbose) {
+    .Call('_poolfstat_compute_snpFstAov', PACKAGE = 'poolfstat', refcount, totcount, hapsize, verbose)
+}
+
+#' @title block_sum
+#' @name block_sum
+#' @rdname block_sum
+#'
+#' @description
+#' Sugar to compute the sum of a stat per block
+#'
+#' @param stat vector of n stat values
+#' @param snp_bj_id integer n-length vector with block index (from 0 to nblock-1) of the stat value 
+#'
+#' @details
+#'  Sugar to compute the sum of a stat per block
+#' 
+#' @return Return a vector of length nblocks containing the per-block sums of the input stat
+#' 
+#' @examples
+#' #
+#' @export
+.block_sum <- function(stat, snp_bj_id) {
+    .Call('_poolfstat_block_sum', PACKAGE = 'poolfstat', stat, snp_bj_id)
+}
+
+#' @title block_sum2
+#' @name block_sum2
+#' @rdname block_sum2
+#'
+#' @description
+#' Sugar to compute the sum of a stat per block defined by a range of SNPs (allow treating overlapping blocks)
+#'
+#' @param stat vector of n stat values
+#' @param snp_bj_id integer matrix of dim nblocks x 2 giving for each block the start and end stat value index 
+#'
+#' @details
+#'  Sugar to compute the sum of a stat per block defined by a range of SNPs (allow treating overlapping blocks)
+#' 
+#' @return Return a vector of length nblocks containing the per-block sums of the input stat
+#' 
+#' @examples
+#' #
+#' @export
+.block_sum2 <- function(stat, snp_bj_id) {
+    .Call('_poolfstat_block_sum2', PACKAGE = 'poolfstat', stat, snp_bj_id)
+}
+
 #' @title poppair_idx
 #' @name poppair_idx
 #' @rdname poppair_idx
@@ -168,101 +364,6 @@ NULL
 #' @examples
 #' #
 NULL
-
-#' @title compute_Ddenom
-#' @name compute_Ddenom
-#' @rdname compute_Ddenom
-#'
-#' @description
-#' Compute the denominator of Dstats
-#'
-#' @param snpQ2 the nsnp by (npop*(npop-1))/2 matrix of all pairwise Q2 estimates
-#' @param f2idx a matrix of nDstat by 2 giving the index of the Q2 required to compute the denominator of the different F4 
-#' @param verbose if TRUE progression bar is printed on the terminal
-#'
-#' @details
-#' Compute the denominator of Dstats
-#' 
-#' @return Return a vector of the denominator of the nDstat
-#' 
-#' @examples
-#' #
-#' @export
-.compute_Ddenom <- function(snpQ2, f2idx, verbose) {
-    .Call('_poolfstat_compute_Ddenom', PACKAGE = 'poolfstat', snpQ2, f2idx, verbose)
-}
-
-#' @title compute_Q_bjmeans
-#' @name compute_Q_bjmeans
-#' @rdname compute_Q_bjmeans
-#'
-#' @description
-#' Compute the the block-jackknife mean of Q values
-#'
-#' @param snpQ matrix of nsnp by nQ estimates of Q (e.g., Q1 or Q2)
-#' @param snp_bj_id integer vector of length nsnp giving the block index of each SNP 
-#' @param verbose if TRUE progression bar is printed on the terminal
-#'
-#' @details
-#' Compute the the block-jackknife mean of Q values
-#' 
-#' @return Return a vector with the block-jackknife mean estimates for the nQ values
-#' 
-#' @examples
-#' #
-#' @export
-.compute_Q_bjmeans <- function(snpQ, snp_bj_id, verbose) {
-    .Call('_poolfstat_compute_Q_bjmeans', PACKAGE = 'poolfstat', snpQ, snp_bj_id, verbose)
-}
-
-#' @title compute_F2_bjmeans
-#' @name compute_F2_bjmeans
-#' @rdname compute_F2_bjmeans
-#'
-#' @description
-#' Compute the the block-jackknife mean of F2 values
-#'
-#' @param snpQ1 the nsnp by npop matrix of Q1 estimates
-#' @param snpQ2 the nsnp by (npop*(npop-1))/2 matrix of all pairwise Q2 estimates
-#' @param q1_idx the nsnp by 2 matrix with the indexes of the Q1 needed to compute each F2
-#' @param snp_bj_id integer vector of length nsnp giving the block index of each SNP 
-#' @param verbose if TRUE progression bar is printed on the terminal
-#'
-#' @details
-#' Compute the the block-jackknife mean of F2 values
-#' 
-#' @return Return a vector with the block-jackknife mean estimates of the F2 values
-#' 
-#' @examples
-#' #
-#' @export
-.compute_F2_bjmeans <- function(snpQ1, snpQ2, q1_idx, snp_bj_id, verbose) {
-    .Call('_poolfstat_compute_F2_bjmeans', PACKAGE = 'poolfstat', snpQ1, snpQ2, q1_idx, snp_bj_id, verbose)
-}
-
-#' @title compute_Ddenom_bjmeans
-#' @name compute_Ddenom_bjmeans
-#' @rdname compute_Ddenom_bjmeans
-#'
-#' @description
-#' Compute the the block-jackknife mean of Dstat denominator
-#'
-#' @param snpQ2 the nsnp by (npop*(npop-1))/2 matrix of all pairwise Q2 estimates
-#' @param f2idx a matrix of nDstat by 2 giving the index of the Q2 required to compute the Dstat denominator 
-#' @param snp_bj_id integer vector of length nsnp giving the block index of each SNP 
-#' @param verbose if TRUE progression bar is printed on the terminal
-#'
-#' @details
-#' Compute the the block-jackknife mean of Dstat denominator
-#' 
-#' @return Return a vector with the block-jackknife mean estimates of the Dstat denominator
-#' 
-#' @examples
-#' #
-#' @export
-.compute_Ddenom_bjmeans <- function(snpQ2, f2idx, snp_bj_id, verbose) {
-    .Call('_poolfstat_compute_Ddenom_bjmeans', PACKAGE = 'poolfstat', snpQ2, f2idx, snp_bj_id, verbose)
-}
 
 #' @title compute_H1
 #' @name compute_H1
@@ -519,5 +620,129 @@ NULL
 #' @export
 .compute_QmatfromF2samples <- function(blockF2, npops, verbose) {
     .Call('_poolfstat_compute_QmatfromF2samples', PACKAGE = 'poolfstat', blockF2, npops, verbose)
+}
+
+#' @title compute_snpQ1onepop
+#' @name compute_snpQ1onepop
+#' @rdname compute_snpQ1onepop
+#'
+#' @description
+#' Compute SNP-specific Q1 for one pop
+#'
+#' @param refcount Vector of nsnp counts (genotype or reads) for the reference allele
+#' @param totcount Vector of nsnp total counts or read coverages
+#' @param weight Numeric (w=1 for allele count data and w=poolsize/(poolsize-1) for PoolSeq data)
+#'
+#' @details
+#' Compute SNP-specific Q1 for one pop. samples. 
+#' 
+#' @return Return a vector of length nsnps with SNP-specific Q1
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpQ1onepop <- function(refcount, totcount, weight) {
+    .Call('_poolfstat_compute_snpQ1onepop', PACKAGE = 'poolfstat', refcount, totcount, weight)
+}
+
+#' @title compute_snpQ2onepair
+#' @name compute_snpQ2onepair
+#' @rdname compute_snpQ2onepair
+#'
+#' @description
+#' Compute SNP-specific Q2 for a single pair of samples
+#'
+#' @param refcount1 Vector of count (genotype or reads) for the reference allele in the first sample
+#' @param refcount2 Vector of count (genotype or reads) for the reference allele in the second sample
+#' @param totcount1 Vector of total count or read coverages in the first sample
+#' @param totcount2 Vector of total count or read coverages in the second sample
+#'
+#' @details
+#' Compute SNP-specific Q2 for a single pair of samples 
+#' 
+#' @return Return a vector of length nsnps with SNP-specific Q1
+#' 
+#' @examples
+#' #
+#' @export
+.compute_snpQ2onepair <- function(refcount1, refcount2, totcount1, totcount2) {
+    .Call('_poolfstat_compute_snpQ2onepair', PACKAGE = 'poolfstat', refcount1, refcount2, totcount1, totcount2)
+}
+
+#' @title simureads_poly
+#' @name simureads_poly
+#' @rdname simureads_poly
+#'
+#' @description
+#' Simulate read counts from count data
+#'
+#' @param y_count Integer Matrix with nsnp rows and npop columns giving allele counts at the reference allele
+#' @param n_count Integer Matrix with nsnp rows and npop columns giving total counts
+#' @param lambda Numeric Vector of length npop giving the expected coverage of each pool
+#' @param overdisp Numeric value giving overdispersion of coverages and their distribution (see details)
+#' @param min_rc Integer giving the minimal read count for an allele to be considered as true allele
+#' @param min_maf Float giving the MAF threshold for SNP filtering
+#' @param eps Numeric value giving the sequencing error
+#' @param eps_exp Numeric value giving the experimental error leading to unequal contribution of individual to the pool reads
+#' @details
+#'  The function implements a simulation approach similar to that described in Gautier et al. (2021). Read coverages are sampled
+#'  from a distribution specified by the lambda and overdisp vectors. Note that overdisp is the same for all pop sample but 
+#'  lambda (expected coverages) may vary across pool. If overdisp=1 (default in the R function), coverages are assumed Poisson distributed
+#'  and the mean and variance of the coverages for the pool are both equal to the value specified in the lambda vector. If overdisp>1, coverages
+#'  follows a Negative Binomial distribution with a mean equal the lamda but a variance equal to overdisp*lambda. Finally, if overdisp<1,
+#'  no variation in coverage is introduced and all coverages are equal to the value specified in the lambda vector 
+#'  although they may (slightly) vary in the output when eps>0 due to the removal of error reads.
+#'  The eps parameter control sequencing error rate. Sequencing errors are modeled following Gautier et al. (2021) i.e. read counts for the four
+#'  possible bases are sampled from a multinomial distribution Multinom(c,\{f*(1-eps)+(1-f)*eps/3;f*eps/3+(1-f)*(1-eps),eps/3,eps/3\}) 
+#'  where c is the read coverage and f the reference allele frequencies (obtained from the count data).
+#'  Experimental error eps_exp control the contribution of individual (assumed diploid) to the pools following the model described 
+#'  in Gautier et al. (2013).  The parameter eps_exp corresponds to the coefficient of variation of the individual contributions
+#'  When eps_exp tends toward 0, all individuals contribute equally to the pool and there is no experimental error. For example, 
+#'  with 10 individuals, eps_exp=0.5 correspond to a situation where 5 individuals contribute 2.8x more reads than the five others.
+#'  Note that the number of (diploid) individuals for each SNP and pop. sample is deduced from the input total count 
+#'  (it may thus differ over SNP when the total counts are not the same). 
+#'  
+#' @return Return an Integer matrix with nsnp rows and 2*npop columns (1:npop=ref allele readcount; (npop+1):2*npop=coverage)  
+#' 
+#' @examples
+#' #
+#' @export
+.simureads_poly <- function(y_count, n_count, lambda, overdisp, min_rc, min_maf, eps, eps_exp) {
+    .Call('_poolfstat_simureads_poly', PACKAGE = 'poolfstat', y_count, n_count, lambda, overdisp, min_rc, min_maf, eps, eps_exp)
+}
+
+#' @title simureads_mono
+#' @name simureads_mono
+#' @rdname simureads_mono
+#'
+#' @description
+#' Simulate read counts for monomorphic position when there is sequencing error
+#'
+#' @param npos Integer giving the number of positions (close to genome size)
+#' @param npop Integer giving the number of population samples
+#' @param lambda Numeric Vector of length npop giving the expected coverage of each pool
+#' @param overdisp Numeric value giving overdispersion of coverages and their distribution (see details)
+#' @param min_rc Integer giving the minimal read count for an allele to be considered as true allele
+#' @param min_maf Float giving the MAF threshold for SNP filtering
+#' @param eps Numeric value giving the sequencing error
+#' @details
+#' The function implements a simulation approach similar to that described in Gautier et al. (2021). Read coverages are sampled
+#' from a distribution specified by the lambda and overdisp vectors. Note that overdisp is the same for all pop sample but 
+#' lambda (expected coverages) may vary across pool. If overdisp=1 (default in the R function), coverages are assumed Poisson distributed
+#' and the mean and variance of the coverages for the pool are both equal to the value specified in the lambda vector. If overdisp>1, coverages
+#' follows a Negative Binomial distribution with a mean equal the lamda but a variance equal to overdisp*lambda. Finally, if overdisp<1,
+#' no variation in coverage is introduced and all coverages are equal to the value specified in the lambda vector 
+#' although they may (slightly) vary in the output when eps>0 due to the removal of error reads.
+#' The eps parameter control sequencing error rate. Sequencing errors are modeled following Gautier et al. (2021) i.e. read counts for the four
+#' possible bases are sampled from a multinomial distribution Multinom(c,\{1-eps;eps/3,eps/3,eps/3\}) 
+#' where c is the read coverage. Only bi-allelic SNPs (after considering min_rc) satisfying with MAF>min_maf are included in the output.
+#'  
+#' @return Return an Integer matrix with nsnp rows and 2*npop columns (1:npop=ref allele readcount; (npop+1):2*npop=coverage)  
+#' 
+#' @examples
+#' #
+#' @export
+.simureads_mono <- function(npos, npop, lambda, overdisp, min_rc, min_maf, eps) {
+    .Call('_poolfstat_simureads_mono', PACKAGE = 'poolfstat', npos, npop, lambda, overdisp, min_rc, min_maf, eps)
 }
 

@@ -3,7 +3,7 @@
 #' @param outfileprefix The prefix of the qpGraph files
 #' @param n.printed.dec Number of decimal to be printed (if not enough may lead to fatalx error in qpGraph)
 #' @param verbose If TRUE extra information is printed on the terminal
-#' @details This function generates the three files required by qpGraph: i) a file named {outfileprefix}.graph containing the graph in appropriate format; ii) a file named {outfileprefix}.fstats file containing the fstats estimates of fstats (and their covariance); iii) a file named {outfileprefix}.parqpGraph containing essential parameter information to run qpGraph (this may be edited by hand if other options are needed). The qpGraph software may then be run using the following options -p {outfileprefix}.parqpGraph -g {outfileprefix}.graph -o out.ggg -d out.dot. 
+#' @details This function generates the three files required by qpGraph: i) a file named [outfileprefix].graph containing the graph in appropriate format; ii) a file named [outfileprefix].fstats file containing the fstats estimates of fstats (and their covariance); iii) a file named [outfileprefix].parqpGraph containing essential parameter information to run qpGraph (this may be edited by hand if other options are needed). The qpGraph software may then be run using the following options -p [outfileprefix].parqpGraph -g [outfileprefix].graph -o out.ggg -d out.dot. 
 #' @return The three files described in the details section
 #' @seealso To generate graph.params object, see \code{\link{generate.graph.params}}
 #' @export
