@@ -30,10 +30,10 @@ sim.readcounts<-function(x,lambda.cov=rep(50,x@npops),overdisp=1,seq.eps=0,exp.e
   tmp=.simureads_poly(x@refallele.count,x@total.count,lambda.cov,overdisp,min.rc,maf.thr,seq.eps,exp.eps)
   pos.poly=rowSums(tmp)!=0
   if(sum(pos.poly)>0){
-   out@refallele.readcount=tmp[pos.poly,1:npop]
-   out@readcoverage=tmp[pos.poly,-1*(1:npop)]
+   out@refallele.readcount=tmp[pos.poly,1:npop,drop=FALSE]
+   out@readcoverage=tmp[pos.poly,-1*(1:npop),drop=FALSE]
    out@snp.info=x@snp.info[pos.poly,]
-   out@snp.info[,3]="poly"
+ #  out@snp.info[,3]="poly"
   }else{
     stop("No SNP left among the polymorophic ones: seq.eps may be too high (generating too many multi-allelic SNPs) or SNP filtering criteria (min.maf and min.rc) too stringent\n")
   }

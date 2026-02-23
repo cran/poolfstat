@@ -20,13 +20,13 @@ sliding.windows.fstat(
 \arguments{
 \item{x}{A pooldata object containing Pool-Seq information or a countdata object containing allele count information}
 
-\item{num.pop.idx}{A vector of length 1 to 4 (depending on num.stat) giving the index of the populations. If num.stat="het", num.pop.idx must be of length 1: num.pop.idx=i specifies the ith pop in x. If num.stat="div", "F2" or "Fst", num.pop.idx must be of length 2: num.pop.idx=c(i,j) specifies the pairs of populations with indexes i and j in x. If num.stat="F3" or "F3star", num.pop.idx must be of length 3 (num.pop.idx=c(i,j,k) specifies the F3(pop_i;pop_j,pop_k) populations triplet). Finally, if num.stat="F4" or "Dstat", num.pop.idx must be of length 4: num.pop.idx=c(i,j,k) specifies the F4(pop_i,pop_j;pop_k,pop_l) populations quadruplet i.e. the computed (numerator) statistic computed is (F2(pop_i,pop_k)-F2(pop_i,pop_l)-F2(pop_j,pop_k)+F2(pop_j,pop_l))/2.}
+\item{num.pop.idx}{A vector of length 1 to 4 (depending on num.stat) giving the index (or names) of the populations samples. If num.stat="het", num.pop.idx must be of length 1: num.pop.idx=i specifies the ith pop in x. If num.stat="div", "F2" or "Fst", num.pop.idx must be of length 2: num.pop.idx=c(i,j) specifies the pairs of populations with indexes i and j in x. If num.stat="F3" or "F3star", num.pop.idx must be of length 3 (num.pop.idx=c(i,j,k) specifies the F3(pop_i;pop_j,pop_k) populations triplet). Finally, if num.stat="F4" or "Dstat", num.pop.idx must be of length 4: num.pop.idx=c(i,j,k) specifies the F4(pop_i,pop_j;pop_k,pop_l) populations quadruplet i.e. the computed (numerator) statistic computed is (F2(pop_i,pop_k)-F2(pop_i,pop_l)-F2(pop_j,pop_k)+F2(pop_j,pop_l))/2.}
 
 \item{den.pop.idx}{A vector of length 1 to 4 (see num.pop.idx description) giving the index of the populations specifying the F-statistic. If NULL, the computed statistic is the one specified by num.pop.idx.}
 
-\item{num.stat}{the name of the (numerator) stat which must be "het" (1-Q1), "div" (1-Q2), "F2", "Fst", "F3", "F3star", "F4" or "Dstat"}
+\item{num.stat}{the name of the (numerator) stat which must be "het" (1-Q1), "div" (1-Q2), "F2", "Fst", "F3", "F3star", "F4", "Dstat", "Fh", "Fd", or "FdM"}
 
-\item{den.stat}{the name of the (numerator) stat which must be "het" (1-Q1), "div" (1-Q2), "F2", "Fst", "F3", "F3star", "F4" or "Dstat"}
+\item{den.stat}{the name of the (numerator) stat which must be "het" (1-Q1), "div" (1-Q2), "F2", "Fst", "F3", "F3star", "F4", "Dstat", "Fh", "Fd", or "FdM"}
 
 \item{window.def}{Either "nsnp" or "bp" to define windows by either a number of SNPs or a size in bp, respectively}
 

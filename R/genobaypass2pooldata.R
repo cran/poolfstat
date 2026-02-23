@@ -1,6 +1,6 @@
 #' Convert BayPass read count and haploid pool size input files into a pooldata object
-#' @param genobaypass.file The name (or a path) of the BayPass read count file (see the BayPass manual \url{https://forgemia.inra.fr/mathieu.gautier/baypass_public/})
-#' @param poolsize.file The name (or a path) of the BayPass (haploid) pool size file (see the BayPass manual \url{https://forgemia.inra.fr/mathieu.gautier/baypass_public/})
+#' @param genobaypass.file The name (or a path) of the BayPass read count file (see the BayPass manual \url{https://forge.inrae.fr/mathieu.gautier/baypass_public/})
+#' @param poolsize.file The name (or a path) of the BayPass (haploid) pool size file (see the BayPass manual \url{https://forge.inrae.fr/mathieu.gautier/baypass_public/})
 #' @param poolnames A character vector with the names of pool
 #' @param snp.pos An optional two column matrix with nsnps rows containing the chromosome (or contig/scaffold) of origin and the position of each markers
 #' @param min.cov.per.pool Minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded
@@ -84,6 +84,7 @@ res@snp.info=data.frame(Chromosome=as.character(tmp.snp.info[,1]),
                         stringsAsFactors = FALSE)
 res@poolsizes=poolsizes
 res@poolnames=poolnames
+colnames(res@refallele.readcount)=colnames(res@readcoverage)=res@poolnames
 
 if(verbose){cat("Data consists of",res@nsnp,"SNPs for",res@npools,"Pools\n")}
 return(res)

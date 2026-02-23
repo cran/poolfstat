@@ -69,7 +69,8 @@ genotreemix2countdata<-function(genotreemix.file="",snp.pos=NA,min.indgeno.per.p
                           AltAllele=as.character(tmp.snp.info[,4]),
                           stringsAsFactors = FALSE)
   res@popnames=popnames
+  colnames(res@refallele.count)=colnames(res@total.count)=res@popnames
   
-  if(verbose){cat("Begin reading data\nThe data set consists of",res@nsnp,"SNPs for",res@npops,"Pops\n")}
+  if(verbose){cat("The data set consists of",res@nsnp,"SNPs for",res@npops,"Pops\n")}
   return(res)
 }

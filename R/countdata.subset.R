@@ -1,6 +1,6 @@
 #' Create a subset of a countdata object that contains count data as a function of pop or SNP indexes
 #' @param countdata A countdata object containing Allele count information
-#' @param pop.index Indexes of the pools (at least two), that should be selected to create the new pooldata object (default=all the pools)
+#' @param pop.index Indexes of the pops (at least two), that should be selected to create the new pooldata object (default=all the pops)
 #' @param snp.index Indexes of the SNPs (at least two), that should be selected to create the new pooldata object (default=all the SNPs)
 #' @param min.indgeno.per.pop  Minimal number of overall counts required in each population. If at least one pop is not genotyped for at least min.indgeno.per.pop (haploid) individual, the position is discarded
 #' @param min.maf Minimal allowed Minor Allele Frequency (computed from the ratio overall counts for the reference allele over the overall number of (haploid) individual genotyped)

@@ -15,6 +15,7 @@
 pooldata2genoselestim=function(pooldata,writing.dir=getwd(),prefix="",subsamplesize=-1,subsamplingmethod="thinning"){
   if(writing.dir==""){stop("ERROR: Please provide the directory path where to copy the example files  (e.g., set writing.dir=getwd() to copy in the current working directory)")}
   if(!(is.pooldata(pooldata))) {stop("Data are not formatted as a valid pooldata object...")}
+  if(pooldata@npools<2){stop("At least 2 pool samples required\n")} #may arrive after pooldata.subset with a single pop
   subsampling=FALSE
   if(subsamplesize>1){
    if(!(subsamplingmethod %in% c("thinning","random"))){stop("subsampling method should either be \"random\" or \"thinning\"")}

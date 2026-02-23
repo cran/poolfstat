@@ -17,7 +17,7 @@ countdata.subset(
 \arguments{
 \item{countdata}{A countdata object containing Allele count information}
 
-\item{pop.index}{Indexes of the pools (at least two), that should be selected to create the new pooldata object (default=all the pools)}
+\item{pop.index}{Indexes of the pops (at least two), that should be selected to create the new pooldata object (default=all the pops)}
 
 \item{snp.index}{Indexes of the SNPs (at least two), that should be selected to create the new pooldata object (default=all the SNPs)}
 

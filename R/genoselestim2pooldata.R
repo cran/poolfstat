@@ -82,6 +82,7 @@ res@snp.info=data.frame(Chromosome=as.character(tmp.snp.info[,1]),
 #rm(snpdet)
 res@poolsizes=poolsizes
 res@poolnames=poolnames
+colnames(res@refallele.readcount)=colnames(res@readcoverage)=res@poolnames
 
 if(verbose){cat("Data consists of",res@nsnp,"SNPs for",res@npools,"Pools\n")}
 return(res)

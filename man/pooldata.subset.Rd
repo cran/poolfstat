@@ -8,9 +8,12 @@ pooldata.subset(
   pooldata,
   pool.index = 1:pooldata@npools,
   snp.index = 1:pooldata@nsnp,
+  min.maf = -1,
+  min.cov = 0,
+  max.cov = 1e+09,
+  cov.qthres = c(0, 1),
   min.cov.per.pool = -1,
   max.cov.per.pool = 1e+06,
-  min.maf = -1,
   cov.qthres.per.pool = c(0, 1),
   return.snp.idx = FALSE,
   verbose = TRUE
@@ -23,11 +26,17 @@ pooldata.subset(
 
 \item{snp.index}{Indexes of the SNPs (at least two), that should be selected to create the new pooldata object (default=all the SNPs)}
 
+\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio over all read counts for the reference allele over the read coverage)}
+
+\item{min.cov}{Minimal allowed read count (over all the pools).}
+
+\item{max.cov}{Maximal allowed read count (over all the pools).}
+
+\item{cov.qthres}{A two-elements vector containing the minimal (qmin) and maximal (qmax) quantile thresholds (0<=qmin<qmax<=1) for the overall coverage (i.e., summing over all pools). See details below}
+
 \item{min.cov.per.pool}{Minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded}
 
 \item{max.cov.per.pool}{Maximal allowed read count (per pool). If at least one pool is covered by more than min.cov.perpool reads, the position is discarded}
-
-\item{min.maf}{Minimal allowed Minor Allele Frequency (computed from the ratio over all read counts for the reference allele over the read coverage)}
 
 \item{cov.qthres.per.pool}{A two-elements vector containing the minimal (qmin) and maximal (qmax) quantile coverage thresholds applied to each pools (0<=qmin<qmax<=1). See details below}
 
@@ -51,7 +60,28 @@ A pooldata object with 7 elements:
 Create a subset of the pooldata object that contains Pool-Seq data as a function of pool and/or SNP indexes
 }
 \details{
-This function allows subsetting a pooldata object by selecting only some pools and/or some SNPs (e.g., based on their position on the genome). Additional filtering steps on SNPs can be carried out on the resulting subset to discard SNP with low polymorphism or poorly or too highly covered. In addition, coverage criteria can be applied on a per-pool basis with the cov.qthres.per.pool argument. 'more specific SNP selection based on their positions on the genome or their characteristics. For instance if qmax=0.95, a position is discarded if in a given pool it has a number of reads higher than the 95-th percentile of the empirical coverage distribution in this same pool (defined over the SNPs selected by snp.index). Similarly, if qmax=0.05, a position is discarded if in a given pool it has a number of reads lower than the 5-th percentile of the empirical coverage distribution in this same pool. This mode of selection may be more relevant when considering pools with heterogeneous read coverages.
+This function subsets a \code{pooldata} object by selecting a subset of pools
+and/or SNPs (e.g., based on genomic position).
+
+Additional SNP-level filtering can be applied to the resulting subset to remove
+poorly polymorphic SNPs using \code{min.maf}, or SNPs with low or excessively high
+coverage using \code{min.cov}, \code{max.cov}, and \code{cov.qthres}.
+
+Coverage filtering can also be performed on a per-pool basis with
+\code{min.cov.per.pool}, \code{max.cov.per.pool}, and \code{cov.qthres.per.pool}.
+
+For the \code{cov.qthres} and \code{cov.qthres.per.pool} arguments, empirical
+coverage quantiles are computed and used as filtering thresholds.
+SNPs with coverage outside the specified quantile range are discarded.
+
+For example, if \code{qmax = 0.95} in \code{cov.qthres.per.pool}, a SNP is removed
+in a given pool if its coverage exceeds the 95th percentile of the empirical
+coverage distribution for that pool (computed over SNPs selected by
+\code{snp.index}). Conversely, if \code{qmin = 0.05}, SNPs with coverage below the
+5th percentile are discarded.
+
+Quantile-based filtering is particularly useful when pools display heterogeneous
+sequencing depth.
 }
 \examples{
  make.example.files(writing.dir=tempdir())

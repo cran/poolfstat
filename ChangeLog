@@ -1,3 +1,22 @@
+Changes from Version 3.0.0 to 3.1.0 [February 20 2026]
+
+* Major update to the sliding.windows.fstat function, including:
+** implementation of three new statistics for detecting introgression (Fh, Fd, and FdM);
+** support for defining statistic configurations using population sample names (in addition to indices);
+** fix of a bug that prevented computation of ratio statistics when numerator and denominator involved configurations with different numbers of populations.
+
+* Addition of two new functions:
+** poolify, to create a (pseudo-)pooled sample from a set of samples using random-allele sampling;
+** data.merge, to merge two pooldata or countdata objects.
+
+* Minor update to vcf2pooldata to:
+** allow direct import of sample names from vcf files;
+** set haploid pool sizes to a default value of 100 when not specified.
+
+* Minor update to pooldata.subset function to enabling filtering based on coverage across all pools with the min.cov, max.cov and cov.qthres arguments, 
+
+* Updates to the vignette.
+
 Changes from Version 2.2.0 to 3.0.0 [November 22 2024]
 
 * Major modifications:

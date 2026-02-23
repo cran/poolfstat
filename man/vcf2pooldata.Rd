@@ -21,9 +21,9 @@ vcf2pooldata(
 \arguments{
 \item{vcf.file}{The name (or a path) of the Popoolation sync file (might be in compressed format)}
 
-\item{poolsizes}{A numeric vector with haploid pool sizes}
+\item{poolsizes}{A numeric vector with haploid pool sizes (if NA haploid pools sizes are set to a default value of 100)}
 
-\item{poolnames}{A character vector with the names of pool}
+\item{poolnames}{A character vector with the names of pool (if NA sample names are retrieved from the vcf header)}
 
 \item{min.cov.per.pool}{Minimal allowed read count (per pool). If at least one pool is not covered by at least min.cov.perpool reads, the position is discarded}
 

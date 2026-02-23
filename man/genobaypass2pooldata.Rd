@@ -16,9 +16,9 @@ genobaypass2pooldata(
 )
 }
 \arguments{
-\item{genobaypass.file}{The name (or a path) of the BayPass read count file (see the BayPass manual \url{https://forgemia.inra.fr/mathieu.gautier/baypass_public/})}
+\item{genobaypass.file}{The name (or a path) of the BayPass read count file (see the BayPass manual \url{https://forge.inrae.fr/mathieu.gautier/baypass_public/})}
 
-\item{poolsize.file}{The name (or a path) of the BayPass (haploid) pool size file (see the BayPass manual \url{https://forgemia.inra.fr/mathieu.gautier/baypass_public/})}
+\item{poolsize.file}{The name (or a path) of the BayPass (haploid) pool size file (see the BayPass manual \url{https://forge.inrae.fr/mathieu.gautier/baypass_public/})}
 
 \item{snp.pos}{An optional two column matrix with nsnps rows containing the chromosome (or contig/scaffold) of origin and the position of each markers}
 

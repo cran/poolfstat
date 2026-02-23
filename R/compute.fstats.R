@@ -35,6 +35,7 @@ compute.fstats<-function(x,nsnp.per.bjack.block=0,computeDstat=FALSE,computeF3=T
   } 
   if(is.pooldata(x)){npops=x@npools ; popnames=x@poolnames}
   if(is.countdata(x)){npops=x@npops ; popnames=x@popnames}  
+  if(npops<2){stop("At least 2 pop. samples required to compute Fstats\n")} #may arrive after pooldata.subset with a single pop
   if(npops<4 & computeF4){computeF4=FALSE}#else{computeF4=TRUE}
   if(npops<3 & computeF3){computeF3=FALSE}#else{computeF3=TRUE}
   if(!computeF4){computeDstat=FALSE}

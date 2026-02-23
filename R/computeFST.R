@@ -28,6 +28,7 @@ computeFST <- function(x,method = "Anova",struct = NULL,weightpid=FALSE,nsnp.per
   if(!(is.pooldata(x)) & !(is.countdata(x))){
     stop("Input data are not formatted as valid pooldata (see the popsync2pooldata, vcf2pooldata, genobaypass2pooldata and selestim2pooldata functions) or countdata (see the genobaypass2countdata and genotreemix2countdata) object\n")} 
   if(is.countdata(x)){nbr.pops <- x@npops}else{nbr.pops <- x@npools}
+  if(nbr.pops<2){stop("At least 2 pop. samples required to compute Fst\n")} #may arrive after pooldata.subset with a single pop
   if(is.null(struct)){
     compute.hierfstat=FALSE    
   }else{
